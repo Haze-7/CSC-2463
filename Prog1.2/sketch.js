@@ -3,7 +3,6 @@ let colorSelections;
 let paint;
 let overColorSelection = false;
 let size = 0;
-let paintSize = 10;
 
 function setup() {
   createCanvas(1400, 700);
@@ -43,12 +42,12 @@ function draw() {
 
 function mousePressed() {
 
-  for (let i = 0; i < colors.length; i++) 
+  for (let i = 0; i < colors.length; i++) //go through array
   {
-    if (colors[i].contains(mouseX, mouseY))
+    if (colors[i].contains(mouseX, mouseY)) // check if mouse is inside any of them
     {
-    paintColor = colors[i].fill;
-    overColorSelection = true;
+    paintColor = colors[i].fill; //fill with correct color
+    overColorSelection = true; //confirm that mouse is within selection square
     }
 
 }

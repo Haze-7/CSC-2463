@@ -9,7 +9,7 @@ function setup() {
   selectedColor = color('white');
 
   faces = [
-    new Face(200,150, color('blue')), 
+    new Face(200, 150, color('blue')), 
     new Face(50, 50, color('orange')), 
     new Face(100, 250, color('purple'))]; //brackets create array
 }

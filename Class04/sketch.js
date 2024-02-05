@@ -26,7 +26,7 @@ function draw() {
 }
 
 function mousePressed() {
-  let isinFace = false;
+  let isInFace = false;
 
   for(let i = 0; i < faces.length; i++) // go through array
   {
@@ -76,3 +76,4 @@ class Face {
     return insideX && insideY; // return true if both are true/ else return false
   }
 }
+

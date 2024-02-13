@@ -1,6 +1,7 @@
 let sprite;
 
 
+
 function preload() {
   sprite = new Sprite(200, 200, 80, 80);
   sprite.spriteSheet= "assets/Eskimo.png";
@@ -44,7 +45,7 @@ function draw() {
   }
   else 
   {
-    //stop();
+    stop();
   }
 
   function stop() {
@@ -98,22 +99,22 @@ function walkDown() {
 }
 
 
-function keyTyped() { // allow keyboard control of character /  heck for key to be typed
-  switch(key){ //when key is __ do __
-    case 'd': //when key is d
-      walkRight();
-      break;
-    case 'a':
-      walkLeft();
-      break;
-    case 'w':
-      walkUp();
-      break;
-    case 's':
-      walkDown();
-      break;
-  }
-}
+// function keyTyped() { // allow keyboard control of character /  heck for key to be typed
+//   switch(key){ //when key is __ do __
+//     case 'd': //when key is d
+//       walkRight();
+//       break;
+//     case 'a':
+//       walkLeft();
+//       break;
+//     case 'w':
+//       walkUp();
+//       break;
+//     case 's':
+//       walkDown();
+//       break;
+//   }
+//}
 
 
 //old code good for studying

@@ -1,10 +1,13 @@
 let sprite;
-let characters;
-let createChars;
+let movements;
 
-let eskimoChar;
-let limeChar;
-let ninjaChar;
+let characters;
+
+
+let eskimo;
+let lime;
+let ninja;
+
 
 //curently truying to make groups/ subgroups from reference page for p5 play
 
@@ -15,33 +18,28 @@ let ninjaChar;
 
 
 function preload() {
-
-  characters = new Group();
-    characters.x = 200;
-    characters.y = 200;
-    characters.height = 80;
-    characters.width =  80;
-
-
-  sprite = new characters.Sprite();
-  sprite.spriteSheet = "assets/Eskimo.png";
-
-
-
-  //sprite = new Sprite(250, 150, 80, 80);
-  //sprite.spriteSheet = "assets/Lime.png";
   
-  //sprite = new Sprite(150, 140, 80, 80);
-  //sprite.spriteSheet = "assets/Ninja.png";
+  //eskimo = new Character(200, 200, 80, 80, spriteSheet, movements);
 
-  let movements = { //define as object
-    stand: {row: 0, frames: 1}, //find where it is in style sheet (use index system)
-    walkRight: {row: 0, col:1, frames: 8} //set column too / don't if 0 (default)
-  };
+  characters = [
+    new Character(200, 200, 80, 80, "assets/Eskimo.png", movements),
+    new Character(80, 80, 80, 80, "assets/Lime.png", movements),
+    new Character(240, 240, 80, 80, "assets/Ninja.png", movements)
+  ]
 
-sprite.anis.frameDelay = 8;//how many frames to wait before going to next frame / sets speed
-sprite.addAnis(movements); //
-sprite.changeAni("walkRight"); //sets animation to 60fps
+  // eskimo = new Sprite(80, 80, 80, 80);
+  // eskimo.spriteSheet = "assets/Eskimo.png";
+  // sprite = new Sprite(200, 200, 80, 80);
+  // sprite.spriteSheet = "assets/Lime.png";
+  // lime = new Sprite(320, 320, 80, 80);
+  // lime.spriteSheet ="assets/Ninja.png";
+
+  
+  // let movements = { //define as object
+  //   stand: {row: 0, frames: 1}, //find where it is in style sheet (use index system)
+  //   walkRight: {row: 0, col:1, frames: 8} //set column too / don't if 0 (default)
+  // };
+
 
 }
 
@@ -52,77 +50,75 @@ function setup() {
 function draw() {
   background(0);
 
-  if (keyCode === RIGHT_ARROW)
+  if (keyIsDown(RIGHT_ARROW))
   {
-    walkRight();
+    Character.walkRight();
   }
-  else if (keyCode === LEFT_ARROW)
+  else if (keyIsDown(LEFT_ARROW))
   {
-    walkLeft();
+    Character.walkLeft();
   }
-  else 
+  else
   {
-    stand();
+    Character.stand();
   }
 
+  //bounds check to keep character within screen
+  if (characters.x + characters.width / 3 > width) // if walk into right wall / edge
+  {
+    Character.walkLeft(); //turn around
+  }
+  else if (characters.x - characters.width / 3 < 0) // if walk into left wall/ edge
+  {
+    Character.walkRight(); // turn around
+  }
 }
 
 
 class Character {
+  sprite = new Sprite();
 
-  constructor (x, y, height, width) {
+  constructor (x, y, width, height, spriteSheet, movements) {
+    this.sprite = new Sprite(x, y, width, height);
     this.x = x;
     this.y = y;
     this.height = height;
     this.width = width;
+    this.spriteSheet = spriteSheet; // need to make a string
+    this.movements = movements;
+
+    movements = { //define as object
+      stand: {row: 0, frames: 1}, //find where it is in style sheet (use index system)
+      walkRight: {row: 0, col:1, frames: 8} //set column too / don't if 0 (default)
+    };
+
+    this.sprite.anis.frameDelay = 8;//how many frames to wait before going to next frame / sets speed
+    this.sprite.addAnis(movements); //
+    this.sprite.changeAni("walkRight"); //sets animation to 60fps
+
   }
+  
 
-  setup() {
-    characters = new Group();
-    characters.x = 200;
-    characters.y = 200;
-    characters.height = 80;
-    characters.width =  80;
+  walkRight() {
+    this.sprite.changeAni("walkRight")
+    this.sprite.vel.x = 1; // makes character walk forward/ off screen to right
+    this.sprite.scale.x = 1;
+    this.sprite.vel.y = 0; // make unused axis to 0 / makes them stop
   }
-
-
+  
+  walkLeft() {
+    this.sprite.changeAni("walkRight"); // same ani, just switch scale
+    this.sprite.vel.x = -1; // makes chracter go left
+    this.sprite.scale.x = -1;//same size, flip horizontally / not working?
+    this.sprite.vel.y = 0; //unused axis
+  }
+  
+  stand() {
+    this.sprite.vel.x = 0; // stop moving left-right/ horizontally
+    this.sprite.changeAni('stand'); // set to stand animation/ pose
+  }
 }
 
-
-    
-
-    //sprite = new Sprite(x, y, width, height)
-    //sprite.spriteSheet = "assets/Eskimo.png";
-
-// function KeyPressed() {
-//  if (keyCode === LEFT_ARROW) 
-//   {
-//     walkRight();//walk right
-//   }
-//   else if (keyCode === RIGHT_ARROW)
-//   {
-//     walkLeft();//walk left
-//   }
-// }
-
-function walkRight() {
-  sprite.changeAni("walkRight")
-  sprite.vel.x = 1; // makes character walk forward/ off screen to right
-  sprite.scale.x = 1;
-  sprite.vel.y = 0; // make unused axis to 0 / makes them stop
-}
-
-function walkLeft() {
-  sprite.changeAni("walkRight"); // same ani, just switch scale
-  sprite.vel.x = -1; // makes chracter go left
-  sprite.scale.x = -1;//same size, flip horizontally / not working?
-  sprite.vel.y = 0; //unused axis
-}
-
-function stand() {
-  sprite.vel.x = 0; // stop moving left-right/ horizontally
-  sprite.changeAni('stand'); // set to stand animation/ pose
-}
 
 // characters = [
 //   new Character(200, 200, 80, 80),

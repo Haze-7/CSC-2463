@@ -6,6 +6,12 @@ function preload() {
   characters = new Sprite(200, 200, 80, 80);
   characters.spriteSheet = "assets/Eskimo.png";
 
+  // characters = [
+  //   new Character(200, 200, 80, 80, "assets/Eskimo.png", movements),
+  //   new Character(80, 80, 80, 80, "assets/Lime.png", movements),
+  //   new Character(240, 240, 80, 80, "assets/Ninja.png", movements)
+  // ];
+
   let movements = { //define as object
     stand: {row: 0, frames: 1}, //find where it is in style sheet (use index system)
     walkRight: {row: 0, col:1, frames: 8} //set column too / don't if 0 (default)

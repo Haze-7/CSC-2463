@@ -1,5 +1,6 @@
 let sprite;
 let movements;
+let spriteSheet = "";
 
 let characters;
 
@@ -11,7 +12,7 @@ let ninja;
 
 //curently truying to make groups/ subgroups from reference page for p5 play
 
-//need to make a character class to make objects
+//need to make a character class to make objectsS
 
 //needs to have (x, y , height, width)
 //needs to be able to fill in spriteSheet
@@ -19,13 +20,17 @@ let ninja;
 
 function preload() {
   
-  //eskimo = new Character(200, 200, 80, 80, spriteSheet, movements);
+  // eskimo = new Character(200, 200, 80, 80, spriteSheet, movements);
+  // eskimo.spriteSheet = "assets/Eskimo.png";
+  
 
   characters = [
     new Character(200, 200, 80, 80, "assets/Eskimo.png", movements),
     new Character(80, 80, 80, 80, "assets/Lime.png", movements),
     new Character(240, 240, 80, 80, "assets/Ninja.png", movements)
   ]
+
+  characters.spriteSheet(spriteSheet);
 
   // eskimo = new Sprite(80, 80, 80, 80);
   // eskimo.spriteSheet = "assets/Eskimo.png";
@@ -34,12 +39,9 @@ function preload() {
   // lime = new Sprite(320, 320, 80, 80);
   // lime.spriteSheet ="assets/Ninja.png";
 
-  
-  // let movements = { //define as object
-  //   stand: {row: 0, frames: 1}, //find where it is in style sheet (use index system)
-  //   walkRight: {row: 0, col:1, frames: 8} //set column too / don't if 0 (default)
-  // };
-
+  //characters.anis.frameDelay = 8;//how many frames to wait before going to next frame / sets speed
+  //this.sprite.addAnis(movements); //
+  //characters.changeAni("walkRight"); //sets animation to 60fps
 
 }
 
@@ -50,74 +52,73 @@ function setup() {
 function draw() {
   background(0);
 
-  if (keyIsDown(RIGHT_ARROW))
-  {
-    Character.walkRight();
-  }
-  else if (keyIsDown(LEFT_ARROW))
-  {
-    Character.walkLeft();
-  }
-  else
-  {
-    Character.stand();
-  }
-
-  //bounds check to keep character within screen
-  if (characters.x + characters.width / 3 > width) // if walk into right wall / edge
-  {
-    Character.walkLeft(); //turn around
-  }
-  else if (characters.x - characters.width / 3 < 0) // if walk into left wall/ edge
-  {
-    Character.walkRight(); // turn around
-  }
+  characters.draw();
 }
 
 
 class Character {
-  sprite = new Sprite();
+
 
   constructor (x, y, width, height, spriteSheet, movements) {
     this.sprite = new Sprite(x, y, width, height);
-    this.x = x;
-    this.y = y;
-    this.height = height;
-    this.width = width;
     this.spriteSheet = spriteSheet; // need to make a string
-    this.movements = movements;
-
+    this.sprite.addAnis(movements); //
+    this.sprite.changeAni('stand');
+  }
+  
     movements = { //define as object
       stand: {row: 0, frames: 1}, //find where it is in style sheet (use index system)
       walkRight: {row: 0, col:1, frames: 8} //set column too / don't if 0 (default)
     };
 
-    this.sprite.anis.frameDelay = 8;//how many frames to wait before going to next frame / sets speed
-    this.sprite.addAnis(movements); //
-    this.sprite.changeAni("walkRight"); //sets animation to 60fps
+    draw() {
 
-  }
-  
+      if (keyIsDown(RIGHT_ARROW))
+      {
+        Character.walkRight();
+      }
+      else if (keyIsDown(LEFT_ARROW))
+      {
+        Character.walkLeft();
+      }
+      else
+      {
+        stand();
+      }
+    
+      //bounds check to keep character within screen
+      if (characters.x + characters.width / 3 > width) // if walk into right wall / edge
+      {
+        walkLeft(); //turn around
+      }
+      else if (characters.x - characters.width / 3 < 0) // if walk into left wall/ edge
+      {
+        walkRight(); // turn around
+      }
+    }
+    
 
-  walkRight() {
-    this.sprite.changeAni("walkRight")
-    this.sprite.vel.x = 1; // makes character walk forward/ off screen to right
-    this.sprite.scale.x = 1;
-    this.sprite.vel.y = 0; // make unused axis to 0 / makes them stop
+    walkRight() {
+      this.sprite.changeAni("walkRight")
+      this.sprite.vel.x = 1; // makes character walk forward/ off screen to right
+      this.sprite.scale.x = 1;
+      this.sprite.vel.y = 0; // make unused axis to 0 / makes them stop
+    }
+    
+    walkLeft() {
+      cthis.sprite.changeAni("walkRight"); // same ani, just switch scale
+      this.sprite.vel.x = -1; // makes chracter go left
+      this.sprite.scale.x = -1;//same size, flip horizontally / not working?
+      this.sprite.vel.y = 0; //unused axis
+    }
+    
+    stand() {
+      this.sprite.vel.x = 0; // stop moving left-right/ horizontally
+      this.sprite.changeAni('stand'); // set to stand animation/ pose
+    }
   }
-  
-  walkLeft() {
-    this.sprite.changeAni("walkRight"); // same ani, just switch scale
-    this.sprite.vel.x = -1; // makes chracter go left
-    this.sprite.scale.x = -1;//same size, flip horizontally / not working?
-    this.sprite.vel.y = 0; //unused axis
-  }
-  
-  stand() {
-    this.sprite.vel.x = 0; // stop moving left-right/ horizontally
-    this.sprite.changeAni('stand'); // set to stand animation/ pose
-  }
-}
+
+
 
 
 // characters = [

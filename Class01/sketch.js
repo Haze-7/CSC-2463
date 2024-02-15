@@ -56,23 +56,25 @@ function draw() {
 
 class Character {
 
-  constructor (x, y, height, width, name) {
+  constructor (x, y, height, width, spriteSheet, moevements) {
     this.x = x;
     this.y = y;
     this.height = height;
     this.width = width;
-    this.name = name;
+    this.spriteSheet = spriteSheet;
+    this.movements = movements;
+  }
+  //Create sprite (x, y, height, width)
+  //set sprite sheet
+  //anis.frameDelay = 8
+  //addAnis(movements)
+  // .changeAni('stand')
+
+  createSprite (x, y, height, width) {
+    
   }
 
-  createGroup(x, y, height, width, name) {
 
-    characters = new Group();
-    characters.x = 200;
-    characters.y = 200;
-    characters.height = 80;
-    characters.width =  80;
-
-  }
 }
 
 function walkRight() {

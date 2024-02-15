@@ -18,7 +18,7 @@ characters.changeAni("walkRight"); //sets animation to 60fps
 }
 
 function setup() {
-  createCanvas(400, 400);
+  createCanvas(800, 800);
 }
 
 function draw() {

@@ -93,3 +93,11 @@ function keyTyped() {
   }
   } 
 }
+
+//to do
+
+//finish start menu (optional)
+//set up bug squish/ press
+//figure out how to display texts for menus
+//get timer / score display / function working
+//Test game and turn in

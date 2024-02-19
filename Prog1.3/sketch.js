@@ -2,6 +2,7 @@ let sprite;
 let movements;
 let characters = [];
 
+
 function preload() {
   // determines location of desired frame within spritesheet 
   movements = { //define as object
@@ -69,4 +70,6 @@ class Character {
       this.sprite.vel.x = 0; // stop moving left-right/ horizontally
       this.sprite.changeAni('stand'); // set to stand animation/ pose
     }
+
+ 
   }

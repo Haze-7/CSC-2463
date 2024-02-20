@@ -36,16 +36,19 @@ function draw() {
   {
     if (mouseX >= x && mouseX <= x + size && mouseY >= y && mouseY <= y + size){
       dragging = true;
+      console.log("mousePressed");
     }
   }
 
   function mouseReleased() {
     dragging = false;
+    console.log("mouseReleased");
   }
 
   function mouseDragged() {
     if (dragging) {
       x += mouseX - pmouseX;
       y += mouseY - pmouseY;
+      console.log("mouseDragged");
     }
     }

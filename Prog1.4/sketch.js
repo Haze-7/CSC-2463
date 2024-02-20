@@ -2,18 +2,33 @@ let sprite;
 let animations;
 let bugs = [];
 
-let spawnX = 0;
-let spawnY = 0;
+let spawnX;
+let spawnX2;
+let spawnX3;
+let spawnY;
+let spawnY2;
+let spawnY3;
 let startOrientation = 0;
+let numBugSpawn = 0;
+
+//Mouse detection/ clicking
+let dragging = false;
+let bugWidth = 32;
+let bugHeight = 32;
+let bugSize = 32;
+
 
 //game function
+
+let gameOver = false;
 let bugSquished = false;
 let timeLeft = 30; // default 30 secs
 let playing = false;
 
-function preload() {
+// squish counter
+let squishCounter = 0;
 
-  
+function preload() {
 
   //row: index row (vert) column: index colmn (horiz) frames: no index to go through
   animations = {
@@ -31,17 +46,23 @@ function preload() {
     squishDown: {row: 3, col: 3, frames: 1}
 
   };
-
   spawnX = random(32, 568);
+  spawnX2 = random(32, 568);
+  spawnX3 = random(32, 568);
   spawnY = random(32, 568);
-  startOrientation = Math.round(random(1,4));
-  //playing = true;
+  spawnY2 = random(32, 568);
+  spawnY3 = random(32, 568);
 
-  startMenu();
-  
-  bugs.push(new Bug(spawnX, spawnY, 32, 32, "assets/Bug.png", animations));
-    
-  
+  startOrientation = Math.round(random(1,4));
+  numBugSpawn = Math.round(random(1,5));
+
+  //fix to set random # of bug
+  if (numBugSpawn == 1)
+  {
+  bugs.push(new Bug(spawnX, spawnY, bugWidth, bugHeight, "assets/Bug.png", animations));
+  }
+  bugs.push(new Bug(spawnX2, spawnY2, bugWidth, bugHeight, "assets/Bug.png", animations));
+  bugs.push(new Bug(spawnX3, spawnY3, bugWidth, bugHeight, "assets/Bug.png", animations));
 
 }
 
@@ -51,38 +72,45 @@ function setup() {
 
 function draw() {
   background(0);
-
   //start menu here
-  startMenu();
 
-  
-  playing == true; // temporary
+  // playing == true; // temporary
 
-  if (playing)
-  {
-    play();
-  }
-  else
-  {
-    gameEnd();
+  // if (playing)
+  // {
+  //   play();
+  // }
+  // else
+  // {
+  //   gameEnd();
+  // }
+
+  if (bugSquished) {
+
   }
 
   //startMenu();
   bugs.forEach((bug) => {
-
-  bug.idle();
+  
+  if (startOrientation == 1)
+  {
+    bug.goRight();
+  }
+  else if (startOrientation == 2)
+  {
+    bug.goLeft();
+  }
+  else if (startOrientation == 3)
+  {
+    bug.goUp();
+  }
+  else if (startOrientation == 4)
+  {
+    bug.goDown();
+  }
 
 
   })
-
-
-  //start left go right
-
-  //start right go left
-
-  //start up go down
-
-  //start down go up
 }
 
 class Bug {
@@ -122,10 +150,9 @@ class Bug {
           this.sprite.vel.y = 1; // cdown bc increasing in y
           this.sprite.vel.x = 0;
         }
-        
+        //necessary?
         idle() {
           
-          console.log(startOrientation);
           this.sprite.vel.x = 0; // stop moving left-right/ horizontally
           
           if (startOrientation == 1)  // come back to, set bounds
@@ -150,8 +177,8 @@ class Bug {
         squish() {
           this.sprite.vel.x = 0;
           this.sprite.changeAni("squishUp");
-          //increment bug squish counter
-          //speed up speed of rest of them
+          bugSquished++;//increment bug squish counter
+          this.sprite.vel.x++;//speed up speed of rest of them
         }
   }
   //display Menu text
@@ -159,7 +186,7 @@ class Bug {
   //set playing to true
   function startMenu() {
     //text("message", xloc, yloc)
-    
+    background();
     text("Welcome to Bug Squish!", 300, 200);
     text("You will have 30 seconds to squishas many bugs as you can!", 300, 300);
     text("Press space to start playing.", 300, 400);
@@ -212,4 +239,34 @@ class Bug {
     } 
 
   //mouse click detection
-  //no dragging (check mouse released)
+  function mousePressed()
+  {
+    if (mouseX >= spawnX && mouseX <= spawnX + bugSize && mouseY >= spawnY && mouseY <= spawnY + bugSize){
+      dragging = true;
+      bugSquished = true;
+      squishCounter++;
+      console.log("mousePressed");
+    }
+  }
+  //(check mouse released)
+  function mouseReleased() {
+    dragging = false;
+    console.log("mouseReleased");
+  }
+//no dragging 
+  function mouseDragged() {
+    if (dragging) {
+      spawnX += mouseX - pmouseX;
+      spawnY += mouseY - pmouseY;
+      console.log("mouseDragged");
+    }
+  }
+
+  /*
+  Need to do:
+  Finish setting up mouse clicking (x/y = spawnX/spawnY? figure that out)
+  better way to spawn multiple (insteadof spawnX1-3/spawnY1-3)
+  start / end menu
+  counter / timer
+  displaying ^^
+  */

@@ -3,11 +3,7 @@ let animations;
 let bugs = [];
 
 let spawnX;
-let spawnX2;
-let spawnX3;
 let spawnY;
-let spawnY2;
-let spawnY3;
 let startOrientation = 0;
 let numBugSpawn = 0;
 
@@ -46,12 +42,9 @@ function preload() {
     squishDown: {row: 3, col: 3, frames: 1}
 
   };
+  frameRate = 5;
   spawnX = random(32, 568);
-  spawnX2 = random(32, 568);
-  spawnX3 = random(32, 568);
   spawnY = random(32, 568);
-  spawnY2 = random(32, 568);
-  spawnY3 = random(32, 568);
 
   startOrientation = Math.round(random(1,4));
   numBugSpawn = Math.round(random(1,5));
@@ -61,9 +54,12 @@ function preload() {
   {
   bugs.push(new Bug(spawnX, spawnY, bugWidth, bugHeight, "assets/Bug.png", animations));
   }
-  bugs.push(new Bug(spawnX2, spawnY2, bugWidth, bugHeight, "assets/Bug.png", animations));
-  bugs.push(new Bug(spawnX3, spawnY3, bugWidth, bugHeight, "assets/Bug.png", animations));
-
+  else if (numBugSpawn == 2)
+  {
+  bugs.push(new Bug(spawnX, spawnY, bugWidth, bugHeight, "assets/Bug.png", animations));
+  bugs.push(new Bug(spawnX, spawnY, bugWidth, bugHeight, "assets/Bug.png", animations));
+  }
+  
 }
 
 function setup() {
@@ -269,4 +265,7 @@ class Bug {
   start / end menu
   counter / timer
   displaying ^^
+  set check for bugs, if all squished/ dead, spawn more
+  fix spawn random amount
+  set play time and end game times
   */

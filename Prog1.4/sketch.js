@@ -181,6 +181,7 @@ class Bug {
   function startMenu() {
     //text("message", xloc, yloc)
     background(160,82,45);
+    textSize(40);
     text("Welcome to Bug Squish!", 300, 200);
     text("You will have 30 seconds to squish as many bugs as you can!", 300, 300);
     text("Press space to start playing.", 300, 400);

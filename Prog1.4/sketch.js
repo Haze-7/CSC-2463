@@ -1,11 +1,16 @@
 let sprite;
 let animations;
 let bugs = [];
+let gameFont;
 
 let spawnX;
 let spawnY;
 let startOrientation = 0;
 let numBugSpawn = 0;
+
+let bugsOnScreen = 0;
+
+let rotation = (0, 90, 180, 270);
 
 //Mouse detection/ clicking
 let dragging = false;
@@ -19,12 +24,13 @@ let bugSize = 32;
 let gameOver = false;
 let bugSquished = false;
 let timeLeft = 30; // default 30 secs
-let playing = false;
 
 // squish counter
 let squishCounter = 0;
 
 function preload() {
+
+  gameFont = loadFont("assets/PressStart2P-Regular.ttf"); // load in google font
 
   //row: index row (vert) column: index colmn (horiz) frames: no index to go through
   animations = {
@@ -42,71 +48,43 @@ function preload() {
     squishDown: {row: 3, col: 3, frames: 1}
 
   };
-  frameRate = 5;
-  spawnX = random(32, 568);
-  spawnY = random(32, 568);
+  // spawnX = random(32, 568);
+  // spawnY = random(32, 568);
 
-  startOrientation = Math.round(random(1,4));
+  
   numBugSpawn = Math.round(random(1,5));
+  startOrientation = Math.round(random(1,4)) 
 
-  //fix to set random # of bug
-  if (numBugSpawn == 1)
-  {
-  bugs.push(new Bug(spawnX, spawnY, bugWidth, bugHeight, "assets/Bug.png", animations));
-  }
-  else if (numBugSpawn == 2)
-  {
-  bugs.push(new Bug(spawnX, spawnY, bugWidth, bugHeight, "assets/Bug.png", animations));
-  bugs.push(new Bug(spawnX, spawnY, bugWidth, bugHeight, "assets/Bug.png", animations));
-  }
+  // if (timeLeft && bugsOnScreen <= 5) {
+   //bugs.push(new Bug(random(32, 568), random(32, 568), bugWidth, bugHeight, "assets/Bug.png", animations));
+  // }
+  
+  // bugs.push(new Bug(random(32, 568), random(32, 568), bugWidth, bugHeight, "assets/Bug.png", animations));
+  // bugs.push(new Bug(random(32, 568), random(32, 568), bugWidth, bugHeight, "assets/Bug.png", animations));
+
   
 }
 
 function setup() {
   createCanvas(600, 600);
+  textFont(gameFont); 
+
 }
 
 function draw() {
-  background(0);
-  //start menu here
-
-  // playing == true; // temporary
-
-  // if (playing)
-  // {
-  //   play();
-  // }
-  // else
-  // {
-  //   gameEnd();
-  // }
-
-  if (bugSquished) {
-
-  }
+  background(160,82,45);
 
   //startMenu();
-  bugs.forEach((bug) => {
-  
-  if (startOrientation == 1)
+
+  if (gameOver) //when game ends
   {
-    bug.goRight();
+    gameDone(); // go to gameover screen
   }
-  else if (startOrientation == 2)
-  {
-    bug.goLeft();
-  }
-  else if (startOrientation == 3)
-  {
-    bug.goUp();
-  }
-  else if (startOrientation == 4)
-  {
-    bug.goDown();
+  else{
+    playing(); // play the game
   }
 
 
-  })
 }
 
 class Bug {
@@ -114,7 +92,8 @@ class Bug {
   constructor (x, y, width, height, spriteSheet, animations) {
     this.sprite = new Sprite(x, y, width, height); // add param
     this.sprite.spriteSheet= spriteSheet; // add param
-
+    
+    this.sprite.collider = 'none';
     this.sprite.anis.frameDelay = 8;//how many frames to wait before going to next frame / sets speed
     this.sprite.addAnis(animations); //add the animations / movements selected by movements in preload()
     this.sprite.changeAni("idleUp"); //select ^^ animation to display
@@ -146,24 +125,24 @@ class Bug {
           this.sprite.vel.y = 1; // cdown bc increasing in y
           this.sprite.vel.x = 0;
         }
-        //necessary?
+        
         idle() {
           
           this.sprite.vel.x = 0; // stop moving left-right/ horizontally
           
-          if (startOrientation == 1)  // come back to, set bounds
+          if (Math.round(random(1,4)) == 1)  // come back to, set bounds
           {
           this.sprite.changeAni("idleUp"); // set to stand animation/ pose
           }
-          else if (startOrientation == 2)//right
+          else if (Math.round(random(1,4)) == 2)//right
           {
             this.sprite.changeAni("idleRight");
           }
-          else if (startOrientation == 3)//left
+          else if (Math.round(random(1,4)) == 3)//left
           {
             this.sprite.changeAni("idleLeft");
           }
-          else if (startOrientation == 4) // down
+          else if (Math.round(random(1,4)) == 4) // down
           {
             this.sprite.changeAni("idleDown");
           }
@@ -172,9 +151,28 @@ class Bug {
 
         squish() {
           this.sprite.vel.x = 0;
-          this.sprite.changeAni("squishUp");
-          bugSquished++;//increment bug squish counter
-          this.sprite.vel.x++;//speed up speed of rest of them
+          //replace
+          // if (startOrientation == 1)
+          // {
+          // this.sprite.changeAni("squishRight");
+          // }
+          // else if (startOrienation == 2) {
+          //   this.sprite.changeAni("squishLeft");
+          // }
+          // else if (startOrienation == 2) {
+          //   this.sprite.changeAni("squishUp");
+          // }
+          // else if (startOrienation == 2) {
+          //   this.sprite.changeAni("squishDown");
+          // }
+          // this.sprite.vel.x++;//speed up speed of rest of them
+          //bugSquished++;//increment bug squish counter
+          bugsOnScreen--;
+        }
+        contains (x, y) {
+          let insideX = x >= this.sprite.x - 16 && x <= this.sprite.x + 16;
+          let insideY = x >= this.sprite.y - 16 && y <= this.sprite.y + 16;
+          return insideX, insideY;
         }
   }
   //display Menu text
@@ -182,28 +180,65 @@ class Bug {
   //set playing to true
   function startMenu() {
     //text("message", xloc, yloc)
-    background();
+    background(160,82,45);
     text("Welcome to Bug Squish!", 300, 200);
-    text("You will have 30 seconds to squishas many bugs as you can!", 300, 300);
+    text("You will have 30 seconds to squish as many bugs as you can!", 300, 300);
     text("Press space to start playing.", 300, 400);
     if (key === ' ') {
-      playing = true;
+        playing();
     }
 
   }
-  function play() {
-    playing = true;
+  function playing() {
+
+    //while(timeLeft && bugsOnScreen <= 5) {
+      bugs.push(new Bug(random(32, 568), random(32, 568), bugWidth, bugHeight, "assets/Bug.png", animations));
+      bugsOnScreen++;
+     //}
+
+    bugs.forEach((bug) => {
+  
+      if (startOrientation == 1)
+      {
+        bug.goRight();
+      }
+      else if (startOrientation == 2)
+      {
+        bug.goLeft();
+      }
+      else if (startOrientation == 3)
+      {
+        bug.goUp();
+      }
+      else if (startOrientation == 4)
+      {
+        bug.goDown();
+      }
+
+      if (mousePressed)
+      {
+        bug.squish();
+      }
+      })
+
+
+      timeLeft -= deltaTime / 1000; //track time (deltaTime) convert from milli -> seconds (/1000)
 
     //time decrements over time in seconds
-    timeLeft -= deltaTime / 1000; //track time (deltaTime) convert from milli -> seconds (/1000)
+    
 
     // while (playing == true && timeLeft > 0)
     // {
     //   bugs.push(new Bug(spawnX, spawnY, 32, 32, "assets/Bug.png", animations));
     //   //new Bug(spawnX, spawnY, 32, 32, "assets/Bug.png", animations);
     // }
-    bugs.push(new Bug(spawnX, spawnY, 32, 32, "assets/Bug.png", animations));
+    // bugs.push(new Bug(spawnX, spawnY, 32, 32, "assets/Bug.png", animations));
     
+    timeLeft -= deltaTime / 1000; //track time (deltaTime) convert from milli -> seconds (/1000)
+    if (timeLeft < 0) // when time runs out
+    {
+      gameOver = true; //end game/ game over
+    }
   }
 
   function gameEnd() {
@@ -237,7 +272,7 @@ class Bug {
   //mouse click detection
   function mousePressed()
   {
-    if (mouseX >= spawnX && mouseX <= spawnX + bugSize && mouseY >= spawnY && mouseY <= spawnY + bugSize){
+    if (bugs[0].contains(mouseX, mouseY)){ 
       dragging = true;
       bugSquished = true;
       squishCounter++;
@@ -250,13 +285,14 @@ class Bug {
     console.log("mouseReleased");
   }
 //no dragging 
-  function mouseDragged() {
-    if (dragging) {
-      spawnX += mouseX - pmouseX;
-      spawnY += mouseY - pmouseY;
-      console.log("mouseDragged");
-    }
-  }
+  // function mouseDragged() {
+  //   if (dragging) {
+  //     spawnX += mouseX - pmouseX;
+  //     spawnY += mouseY - pmouseY;
+  //     console.log("mouseDragged");
+  //   }
+ // }
+
 
   /*
   Need to do:

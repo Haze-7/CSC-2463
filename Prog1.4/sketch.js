@@ -108,8 +108,22 @@ class Bug {
     this.sprite.vel.x = 0;
   }
   squish() {
-    this.sprite.changeAni("squish");
-    this.sprite.vel.x = 0;
+    if (startOrientation == 1)
+    {
+    this.sprite.changeAni("squishRight")
+    }
+    if (startOrientation == 2)
+    {
+    this.sprite.changeAni("squishLeft")
+    }
+    if (startOrientation == 3)
+    {
+    this.sprite.changeAni("squishUp")
+    }
+    if (startOrientation == 4)
+    {
+    this.sprite.changeAni("squishDown")
+    }
   }
 
   contains(x,y) {
@@ -184,26 +198,9 @@ class Bug {
       {
         bug.goDown();
       }
-      if (bug.contains(mouseX, mouseY))
+        mouseReleased(bug.squish());
         { 
-          if (startOrientation == 1)
-          {
-          sprite.changeAni("squishRight")
-          }
-          if (startOrientation == 2)
-          {
-          sprite.changeAni("squishLeft")
-          }
-          if (startOrientation == 3)
-          {
-          sprite.changeAni("squishUp")
-          }
-          if (startOrientation == 4)
-          {
-          sprite.changeAni("squishDown")
-          }
-          sprite.vel.x = 0;
-          sprite.vel.y = 0;
+          
           bugsSquished++;
           console.log("mousePressed");
         }
@@ -221,38 +218,31 @@ class Bug {
     }
   }
 
-  // function mousePressed()
-  // {
-  //   for (let i = 0; i < animations.length; i++) {
-  //   if (bugs[0].contains(mouseX, mouseY))
-  //   { 
-  //     if (startOrientation == 1)
-  //     {
-  //     sprite.changeAni("squishRight")
-  //     }
-  //     if (startOrientation == 2)
-  //     {
-  //     sprite.changeAni("squishLeft")
-  //     }
-  //     if (startOrientation == 3)
-  //     {
-  //     sprite.changeAni("squishUp")
-  //     }
-  //     if (startOrientation == 4)
-  //     {
-  //     sprite.changeAni("squishDown")
-  //     }
-  //     sprite.vel.x = 0;
-  //     sprite.vel.y = 0;
-  //     bugsSquished++;
-  //     console.log("mousePressed");
-  //   }
-  // }
-  //(check mouse released)
-  function mouseReleased() {
-    dragging = false;
-    console.log("mouseReleased");
+  function mouseReleased()
+  {
+    for (let i = 0; i < animations.length; i++) {
+    if (bugs[0].contains(mouseX, mouseY))
+    { 
+      if (startOrientation == 1)
+      {
+      sprite.changeAni("squishRight")
+      }
+      if (startOrientation == 2)
+      {
+      sprite.changeAni("squishLeft")
+      }
+      if (startOrientation == 3)
+      {
+      sprite.changeAni("squishUp")
+      }
+      if (startOrientation == 4)
+      {
+      sprite.changeAni("squishDown")
+      }
+      sprite.vel.x = 0;
+      sprite.vel.y = 0;
+      bugsSquished++;
+      console.log("mousePressed");
+    }
   }
-
-
-
+}

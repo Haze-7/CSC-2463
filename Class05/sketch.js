@@ -52,9 +52,8 @@ pop(); // end section
   rotation = 0; // restart rotation
   }
   textSize(10); //set size of text
-  text("Score: " + score, 20, 20); //display time
+  text("Score: " + score, 20, 20); //display score
   text("Time: " + ceil(timeRemaining), width-100, 20); //display time / ceil (round to whole #), location
-
   timeRemaining -= deltaTime / 1000; //track time (deltaTime) convert from milli -> seconds (/1000)
   if (timeRemaining < 0) // when time runs out
   {

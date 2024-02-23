@@ -13,14 +13,14 @@ let guitarButton;
 let drumsButton;
 let tromboneButton;
 
-let pitchLevel = new Tone.PitchShift(-12, 7);
-let reverbLevel = new Tone.Reverb();
+let pitchLevel = new Tone.PitchShift(-12, 7); // fix values
+let reverbLevel = new Tone.Reverb(); // add values
 
-let pitchSlider; 
-let reverbSlider;
+let pitchSlider; //set up
+let reverbSlider; // set up
 
 //variables for effects
-
+//make proper order
 sounds.connect(pitchLevel);
 pitchLevel.toDestination(reverbLevel);
 sounds.toDestination();
@@ -28,6 +28,7 @@ sounds.toDestination();
 function setup() {
   createCanvas(600, 600);
 
+  //create buttons / done
   pianoButton = createButton('Piano');
   pianoButton.position(25, 50);
   pianoButton.mousePressed( () => sounds.player
@@ -50,19 +51,22 @@ function setup() {
 
   // add an effect
 
-  //add slider / button to make it work
+  //add sliders / button to make it work
 
-  pitchSlider = createSlider (-12, 7, 0, 0.05);
-  pitchSlider.position(25, 150);
-  pitchSlider.mouseMoved(() => pitchSlider.feedback.value = pitchSlider.value());
+  pitchSlider = createSlider (-12, 7, 0, 0.05); // figure out proper values
+  pitchSlider.position(25, 150); // pick good position
+  pitchSlider.mouseMoved(() => pitchSlider.value = pitchSlider.value()); // figure out pitchSLider.(???).value
 }
 
 function draw() {
   background(220);
 
-  textSize(20);
+  textSize(20); // set text size
   text("Welcome to Music Player!", 25, 25);
-  text("Welcome to Music Player!");
+  text("Use the sliders below to add effects!", 25, 125);
+  //add headers for sliders
+  //add header for 2nd slider
+
 
 
   //create labeling text to explain how to use the sampler

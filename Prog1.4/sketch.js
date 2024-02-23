@@ -16,7 +16,7 @@ let restartKey = 'r';
 
 function preload() {
 
-  spriteSheet = loadImage("assets/Bug.p-ng");
+  spriteSheet = loadImage("assets/Bug.png");
   gameFont = loadFont("assets/PressStart2P-Regular.ttf"); // load in google font
 
   //row: index row (vert) column: index colmn (horiz) frames: no index to go through

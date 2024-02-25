@@ -13,14 +13,13 @@ let guitarButton;
 let drumsButton;
 let tromboneButton;
 
-let pitchLevel = new Tone.PitchShift(-12, 7); // fix values
-let reverbLevel = new Tone.Reverb(); // add values
+let pitchLevel = new Tone.PitchShift(0.5); // fix values
+let reverbLevel = new Tone.Reverb(0.5); // add values
 
 let pitchSlider; //set up
 let reverbSlider; // set up
 
-//variables for effects
-//make proper order
+//set sound direction chain
 sounds.connect(pitchLevel);
 pitchLevel.toDestination(reverbLevel);
 sounds.toDestination();
@@ -28,47 +27,47 @@ sounds.toDestination();
 function setup() {
   createCanvas(600, 600);
 
-  //create buttons / done
+  //create sound / play buttons 
   pianoButton = createButton('Piano');
-  pianoButton.position(25, 50);
+  pianoButton.position(95, 90);
   pianoButton.mousePressed( () => sounds.player
   ('piano').start());
 
   guitarButton = createButton('Guitar');
-  guitarButton.position(150, 50);
+  guitarButton.position(195, 90);
   guitarButton.mousePressed(() => sounds.player
   ('guitar').start());
 
   drumsButton = createButton("Drums");
-  drumsButton.position(275, 50);
+  drumsButton.position(300, 90);
   drumsButton.mousePressed(() => sounds.player
   ('drums').start());
 
   tromboneButton = createButton("Trombone");
-  tromboneButton.position(400, 50);
+  tromboneButton.position(400, 90);
   tromboneButton.mousePressed(() => sounds.player
   ('trombone').start());
 
   // add an effect
 
-  //add sliders / button to make it work
+//adjust pitch slider
+  pitchSlider = createSlider (0, 0.9, 0, 0.05);
+  pitchSlider.position(215, 200); 
+  pitchSlider.mouseMoved(() => pitchLevel.pitch = pitchSlider.value());
 
-  pitchSlider = createSlider (-12, 7, 0, 0.05); // figure out proper values
-  pitchSlider.position(25, 150); // pick good position
-  pitchSlider.mouseMoved(() => pitchSlider.value = pitchSlider.value()); // figure out pitchSLider.(???).value
+//adjust reverb slider
+  reverbSlider = createSlider (0, 0.9, 0, 0.05); 
+  reverbSlider.position(215, 270); 
+  reverbSlider.mouseMoved(() => reverbLevel.delay = reverbSlider.value());
 }
 
 function draw() {
-  background(220);
+  background(160,82,45);
 
   textSize(20); // set text size
-  text("Welcome to Music Player!", 25, 25);
-  text("Use the sliders below to add effects!", 25, 125);
-  //add headers for sliders
-  //add header for 2nd slider
-
-
-
-  //create labeling text to explain how to use the sampler
-  //text();
+  text("Welcome to Music Sampler", 170, 25);
+  text("Select a Sound to Start Mixing!", 150, 70);
+  text("Use the sliders below to add effects!", 130, 145);
+  text("Adjust the Pitch:", 210, 190);
+  text("Adjust the Reverb:", 200, 250);
 }

@@ -53,7 +53,7 @@ function setup() {
 
 function keyPressed() {
   let playNotes = notes[key];
-  synth.triggerAttack(playNotes, ); // can include time (0.2) if no keyreleased
+  synth.triggerAttack(playNotes); // can include time (0.2) if no keyreleased
 }
 
 function keyReleased()

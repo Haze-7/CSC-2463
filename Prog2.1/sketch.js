@@ -67,7 +67,7 @@ function draw() {
 
   textSize(20); // set text size
   text("Welcome to Music Sampler", 170, 25);
-  text("Select a Sound to Start Mixing!", 150, 70);
+  text("Select a Sound Sample!", 180, 70);
   text("Use the sliders below to add effects!", 130, 145);
   text("Adjust the Pitch:", 210, 190);
   text("Adjust the Reverb:", 200, 250);

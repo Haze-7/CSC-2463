@@ -13,8 +13,9 @@ let guitarButton;
 let drumsButton;
 let tromboneButton;
 
-let pitchLevel = new Tone.PitchShift(0.5); // fix values
-let reverbLevel = new Tone.Reverb(0.5); // add values
+//create new tone objects for effects
+let pitchLevel = new Tone.PitchShift(); es
+let reverbLevel = new Tone.Reverb(); 
 
 let pitchSlider; //set up
 let reverbSlider; // set up
@@ -22,7 +23,7 @@ let reverbSlider; // set up
 //set sound direction chain
 sounds.connect(pitchLevel);
 pitchLevel.toDestination(reverbLevel);
-sounds.toDestination();
+reverbLevel.toDestination();
 
 function setup() {
   createCanvas(600, 600);
@@ -51,7 +52,7 @@ function setup() {
   // add an effect
 
 //adjust pitch slider
-  pitchSlider = createSlider (0, 0.9, 0, 0.05);
+  pitchSlider = createSlider (0, 12, 0, 0.1);
   pitchSlider.position(215, 200); 
   pitchSlider.mouseMoved(() => pitchLevel.pitch = pitchSlider.value());
 

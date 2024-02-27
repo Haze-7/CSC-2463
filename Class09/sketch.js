@@ -12,7 +12,9 @@ let delaySlider;
 let fbSlider; //feedback slider
 let distSlider;
 
-
+//new button for loop way
+let soundNames = ['popcorn', 'water'];
+let buttons = [];
 
 sounds.connect(delAmt); // put sound to delAmt / effect
 delAmt.toDestination(distAmt); // route to distAmt next
@@ -21,13 +23,21 @@ sounds.toDestination(); //breaks up sound source to add effects before sending t
 function setup() {
   createCanvas(400, 400);
 
-  button1 = createButton('Piano');
-  button1.position(85, 150);
-  button1.mousePressed( () => sounds.player('piano').start());
+  //faster for loop way
+  soundNames.forEach((names, index) => {
+    buttons[index] = createButton (names);
+    buttons[index].position (120, 100 + index * 50);
+    buttons[index].mousePressed(sounds.player(names.start()));
+  })
+
+  //Original way to do button
+  // button1 = createButton('Piano');
+  // button1.position(85, 150);
+  // button1.mousePressed( () => sounds.player('piano').start());
   
-  button2 = createButton('Meditation');
-  button2.position(205, 150);
-  button2.mousePressed( () => sounds.player("meditation").start());
+  // button2 = createButton('Meditation');
+  // button2.position(205, 150);
+  // button2.mousePressed( () => sounds.player("meditation").start());
 
   delaySlider = createSlider(0, 1, 0, 0.05); // range 0(none) to max(1), start @ 0, gradual 0.05
   delaySlider.position(120, 200);

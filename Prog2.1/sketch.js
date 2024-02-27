@@ -14,7 +14,7 @@ let drumsButton;
 let tromboneButton;
 
 //create new tone objects for effects
-let pitchLevel = new Tone.PitchShift(); es
+let pitchLevel = new Tone.PitchShift(); 
 let reverbLevel = new Tone.Reverb(); 
 
 let pitchSlider; //set up

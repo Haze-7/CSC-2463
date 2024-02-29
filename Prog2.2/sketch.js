@@ -49,6 +49,7 @@ function setup() {
 
   //create dropdown menu to select synths
   dropDownMenu = createSelect();
+  dropDownMenu.
 
   //add slider1
   //effect1Slider = createSlider()

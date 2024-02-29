@@ -2,19 +2,22 @@
 //check out FMSynth
 let synth = new Tone.FMSynth;
 
+//add more synth options w/ dropdown menu to switch between
+
 //set up notes
+//change order / keys?
 let notes = {
-  'a' : 'C4', // replace / change later
-  's' : 'D4',
-  'f' : 'F4',
-  'g' : 'G4',
-  'h' : 'A4',
-  'j' : 'B4',
-  'k' : 'C5'
+  'q' : 'C4', // replace / change later
+  'w' : 'D4',
+  'e' : 'F4',
+  'r' : 'G4',
+  't' : 'A4',
+  'y' : 'B4',
+  'u' : 'C5'
 }
 
-//set up buttons to select sound
-
+//create dropdown menu to select  (see Class 10)
+let dropDownMenu;
 
 //create new tone objects for effects
 
@@ -22,11 +25,14 @@ let notes = {
 //set sound direction chain
 //synth.connect(effect);
 //effect.toDestination();
+//^^ repeat for each synth (1, 2, 3, etc..)
 synth.toDestination();
 
 
 function setup() {
   createCanvas(600, 600);
+
+  //create dropdown menu to select synths
 
   //add slider1
   //effect1Slider = createSlider()
@@ -41,12 +47,7 @@ function draw() {
   background(160,82,45);
 
   textSize(20); // set text size
-  //text("text", x, y);
-
-  piano({
-    noteon: (playNotes) => synth.triggerAttack(playNotes),
-    noteoff: (playNotes) => synth.triggerRelease()
-  });
+  text("play q - u", 100, 200);
 
 }
 

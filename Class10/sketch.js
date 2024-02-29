@@ -1,7 +1,7 @@
-let synth = new Tone.PolySynth(Tone.MembraneSynth); // can replace PolySynth with other options
-
+let synth1 = new Tone.PolySynth(Tone.MembraneSynth); // can replace PolySynth with other options
+let synth2 = new Tone.PolySynth(Tone.DuoSynth);
 let bend = new Tone.PitchShift();
-
+let mySelect;
 bend.pitch = 0;
 //other options:
 //Tone.metalSynth
@@ -31,13 +31,22 @@ let notes = { // must be outside of a function to be called in others
 //   'k' : 366,
 
 // }
-synth.connect(bend); // route synth to bend
+// }
+synth1.connect(bend); // route synth to bend
+bend.toDestination(); // route bend to audio out
+synth2.connect(bend); // route synth to bend
 bend.toDestination(); // route bend to audio out
 //synth.toDestination();
 
 function setup() {
   createCanvas(400, 400);
 
+  mySelect = createSelect();
+  mySelect.position(100, 100);
+  mySelect.option("Simple Synth"); // options within drop down menu
+  mySelect.option("Duo Synth"); // use .options(text inside)
+  mySelect.selected("Simple Synth"); // set selection currently selected
+  //create slider for pitch
   //create slider for pitch
 
   pitchSlider = createSlider(0, 12, 0, 0.1);
@@ -52,20 +61,29 @@ function setup() {
   //synth.triggerAttack or triggerRelease(playNotes, 0.2);
 
 function keyPressed() {
-  let playNotes = notes[key];
-  synth.triggerAttack(playNotes); // can include time (0.2) if no keyreleased
+  if (mySelect.selected() === "Simple Synth") // when simple synth selected
+  {
+  let playNotes = notes[key]; //(below) set release time(0.8) / set to sound 1 / synth1
+  synth1.triggerAttackRelease(playNotes, 0.8); // can include time (0.2) if no keyreleased
+  }
+  else if (mySelect.selected() === "Duo Synth")
+  {
+    let playNotes = notes[key]; //(below) set release time(0.8) / set to sound 1 / synth1
+    synth2.triggerAttackRelease(playNotes, 0.8); // can include time (0.2) if no keyreleased
+  }
 }
 
-function keyReleased()
-{
-  let playNotes = notes[key];
-  synth.triggerRelease(playNotes, '+0.03')
-}
+// function keyReleased()
+// {
+//   let playNotes = notes[key];
+//   synth.triggerRelease(playNotes, '+0.03')
+// }
 
 function draw() {
   background(100, 220, 150);
 
   text("Play A-K for Synth", 140, 180);
+  mySelect.selected(); // instantiate / draw Selector drop down
 }
 
 

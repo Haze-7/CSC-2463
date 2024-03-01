@@ -49,7 +49,14 @@ function setup() {
 
   //create dropdown menu to select synths
   dropDownMenu = createSelect();
-  dropDownMenu.
+  dropDownMenu.position(5, 90);
+  dropDownMenu.option("Membrane Synth");
+  dropDownMenu.option("Duo Synth");
+  dropDownMenu.option("Metal Synth");
+  dropDownMenu.option("FMSynth");
+
+
+
 
   //add slider1
   //effect1Slider = createSlider()
@@ -64,28 +71,38 @@ function draw() {
   background(160,82,45);
 
   textSize(20); // set text size
-  text("Play Primary Keys: A -> J", 100, 225);
-  text("Play Sharps: W, E, R, T, Y", 100, 200);
+  text("Welcome to Music Synthesizer", 150, 30);
+  text("Select Sound: ", 5, 75);
+  text("Play Primary Keys: A -> J", 160, 300);
+  text("Play Sharps: W, E, R, T, Y", 160, 220);
+  text("Select Effect: ", 400, 75);
+  
+
   //text("play q - u", 100, 200);
   //dropDownMenu.selected()
 }
 
 function keyPressed() {
-  let playNotes = notes[key];
-  synth.triggerAttack(playNotes); // no need for time setting when keyreleased exists
-  // if (mySelect.selected() === "Simple Synth") // when simple synth selected
-  // {
-  // let playNotes = notes[key]; //(below) set release time(0.8) / set to sound 1 / synth1
-  // synth1.triggerAttackRelease(playNotes, 0.8); // can include time (0.2) if no keyreleased
-  // }
-  // else if (mySelect.selected() === "Duo Synth")
-  // {
-  //   let playNotes = notes[key]; //(below) set release time(0.8) / set to sound 1 / synth1
-  //   synth2.triggerAttackRelease(playNotes, 0.8); // can include time (0.2) if no keyreleased
-  // }
+  if (dropDownMenu.selected() === "Membrane Synth") // when membrane synth selected
+   {
+    let playNotes = notes[key]; //(below) set release time(0.8) / set to sound 1 / synth1
+    membraneSynth.triggerAttackRelease(playNotes, 0.8); // can include time (0.2) if no keyreleased
+   }
+  else if (dropDownMenu.selected() === "Duo Synth")
+  {
+    let playNotes = notes[key]; //(below) set release time(0.8) / set to sound 1 / synth1
+    duoSynth.triggerAttackRelease(playNotes, 0.8); // can include time (0.2) if no keyreleased
+  }
+  else if (dropDownMenu.selected() === "Metal Synth")
+  {
+    let playNotes = notes[key]; //(below) set release time(0.8) / set to sound 1 / synth1
+    metalSynth.triggerAttackRelease(playNotes, 0.8); // can include time (0.2) if no keyreleased
+  } 
+  else if (dropDownMenu.selected() === "FM Synth")
+  {
+    let playNotes = notes[key]; //(below) set release time(0.8) / set to sound 1 / synth1
+    FMSynth.triggerAttackRelease(playNotes, 0.8); // can include time (0.2) if no keyreleased
+  } 
 }
 
-function keyReleased() {
-  let playNotes = notes[key]; // redundant?
-  synth.triggerRelease(playNotes, '+0.03');
-}
+

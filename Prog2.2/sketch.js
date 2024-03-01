@@ -1,7 +1,6 @@
+let synth = new Tone.Synth;
 let membraneSynth = new Tone.PolySynth(Tone.MembraneSynth); 
-let duoSynth = new Tone.PolySynth(Tone.DuoSynth);
 let metalSynth = new Tone.MonoSynth(Tone.MetalSynth);
-let FMSynth = new Tone.FMSynth();
 
 //add more synth options w/ dropdown menu to switch between
 
@@ -25,23 +24,19 @@ let notes = {
 let dropDownMenu;
 
 //create new tone objects for effects
-
+let pitchSlider;
 let bend = new Tone.PitchShift();
 bend.pitch = 0
 
 
 
 //set sound direction chain
-membraneSynth.connect(bend); // route synth to bend
+synth.connect(bend); // route synth to bend
 bend.toDestination(); // route bend to audio out
-duoSynth.connect(bend); // route synth to bend
+membraneSynth.connect(bend); // route synth to bend
 bend.toDestination(); // route bend to audio out
 metalSynth.connect(bend); // route synth to bend
 bend.toDestination(); // route bend to audio out
-FMSynth.connect(bend); // route synth to bend
-bend.toDestination(); // route bend to audio out
-//synth.toDestination();
-//synth.toDestination();
 
 
 function setup() {
@@ -50,18 +45,16 @@ function setup() {
   //create dropdown menu to select synths
   dropDownMenu = createSelect();
   dropDownMenu.position(5, 90);
+  dropDownMenu.option("Synth");
   dropDownMenu.option("Membrane Synth");
-  dropDownMenu.option("Duo Synth");
   dropDownMenu.option("Metal Synth");
-  dropDownMenu.option("FMSynth");
 
 
 
 
-  //add slider1
-  //effect1Slider = createSlider()
-  //effectSlider.position(x, y);
-  //effectSlider.mouseMOved(() => effect1.pitch = effect1Slider.value());
+  pitchSlider = createSlider (0, 12, 0, 0.1);
+  pitchSlider.position(400, 90); 
+  pitchSlider.mouseMoved(() => bend.pitch = pitchSlider.value());
 
   //add slider2
 
@@ -75,7 +68,7 @@ function draw() {
   text("Select Sound: ", 5, 75);
   text("Play Primary Keys: A -> J", 160, 300);
   text("Play Sharps: W, E, R, T, Y", 160, 220);
-  text("Select Effect: ", 400, 75);
+  text("Adjust Pitch: ", 410, 75);
   
 
   //text("play q - u", 100, 200);
@@ -83,25 +76,20 @@ function draw() {
 }
 
 function keyPressed() {
-  if (dropDownMenu.selected() === "Membrane Synth") // when membrane synth selected
+  if (dropDownMenu.selected() === "Synth") // when membrane synth selected
    {
     let playNotes = notes[key]; //(below) set release time(0.8) / set to sound 1 / synth1
-    membraneSynth.triggerAttackRelease(playNotes, 0.8); // can include time (0.2) if no keyreleased
+    synth.triggerAttackRelease(playNotes, 0.2); // can include time (0.2) if no keyreleased
    }
-  else if (dropDownMenu.selected() === "Duo Synth")
+  else if (dropDownMenu.selected() === "Membrane Synth")
   {
     let playNotes = notes[key]; //(below) set release time(0.8) / set to sound 1 / synth1
-    duoSynth.triggerAttackRelease(playNotes, 0.8); // can include time (0.2) if no keyreleased
+    membraneSynth.triggerAttackRelease(playNotes, 0.2); // can include time (0.2) if no keyreleased
   }
   else if (dropDownMenu.selected() === "Metal Synth")
   {
     let playNotes = notes[key]; //(below) set release time(0.8) / set to sound 1 / synth1
-    metalSynth.triggerAttackRelease(playNotes, 0.8); // can include time (0.2) if no keyreleased
-  } 
-  else if (dropDownMenu.selected() === "FM Synth")
-  {
-    let playNotes = notes[key]; //(below) set release time(0.8) / set to sound 1 / synth1
-    FMSynth.triggerAttackRelease(playNotes, 0.8); // can include time (0.2) if no keyreleased
+    metalSynth.triggerAttackRelease(playNotes, 0.2); // can include time (0.2) if no keyreleased
   } 
 }
 

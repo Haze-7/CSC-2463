@@ -24,7 +24,7 @@ let notes = {
 //create dropdown menu to select  (see Class 10)
 let dropDownMenu;
 
-//create new tone objects for effects
+// //create new tone objects for effects
 let pitchSlider;
 let bend = new Tone.PitchShift();
 bend.pitch = 0

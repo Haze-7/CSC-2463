@@ -1,3 +1,4 @@
+
 let synth = new Tone.Synth;
 let membraneSynth = new Tone.PolySynth(Tone.MembraneSynth); 
 let metalSynth = new Tone.MonoSynth(Tone.MetalSynth);
@@ -92,5 +93,3 @@ function keyPressed() {
     metalSynth.triggerAttackRelease(playNotes, 0.2); // can include time (0.2) if no keyreleased
   } 
 }
-
-

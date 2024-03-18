@@ -1,84 +1,74 @@
-let sine = new Tone.Synth ({
-  oscillator: {
-    type: 'sine'
-  },
-  envelope : { // create envelope (acts as css style on type/ wave)
-    attack: 0.01, // from when sound starts to full beat/ play  /smaller = more aggressive
-    decay: 0.01, //rate it trails off at when stop / opposite of ^^
-    sustain: 0.5, //how long to keep the sound going for
-    release: 0.5 //how long the sound takes to stop
-  }
-}).toDestination();
+let noise = new Tone.Noise("brown"); //pink, brown, or white sound
+let filter = new Tone.Filter(200, "lowpass"); // highpass, lowpass, bandpass / # is cut off frequency
+//w/ highpass use 5000
 
-let square = new Tone.Synth ({
-  oscillator: {
-    type: 'square'
-  }, // comma after square
-    envelope : { // create envelope (acts as css style on type/ wave)
-      attack: 0.01, //speed
-      decay: 0.1, //
-      sustain: 0.9, //
-      release: 0.01 //
-    }
-}).toDestination();
-let triangle = new Tone.Synth ({
-  oscillator: {
-    type: 'triangle'
-  },
-  envelope : { // create envelope (acts as css style on type/ wave)
-    attack: 0.1, //
-    decay: 0.1, //
-    sustain: 0.1, //
-    release: 0.1 //
-  }
-}).toDestination();
-let saw = new Tone.Synth ({
-  oscillator: {
-    type: 'sawtooth'
-  },
-  envelope : { // create envelope (acts as css style on type/ wave)
-    attack: 0.1, //
-    decay: 0.1, //
-    sustain: 0.1, //
-    release: 0.1 //
-  }
-}).toDestination();
+let filterSlider;
 
-function setup() {
-  createCanvas(400, 400);
-}
-function keyPressed() {
+noise.connect(filter);
+filter.toDestination();
+
+function keyPressed() { // another way to check for action
   if (key === 'q')
   {
-    sine.triggerAttackRelease('c4', 1);
+    filter.frequency.rampTo(10000, 3) // automatically increases frequency (like a slider) over set time / 5000 instead of 10 w/ highpass / goes high to low
+    noise.start();
   }
   else if (key === 'w')
   {
-    square.triggerAttackRelease('c4', 1);
-  }
-  else if (key === "e")
-  {
-    triangle.triggerAttackRelease('c4', 1);
-  }
-  else if (key === "r")
-  {
-    saw.triggerAttackRelease('c4', 1);
+    noise.stop();
+    filter.frequency.value = 5000;
   }
 }
 
-// function keyReleased()
-// {
-//   let playNotes = notes[key];
-//   synth.triggerRelease(playNotes, '+0.03')
-// }
+function setup() { 
+  createCanvas(400, 400);
+  filterSlider = createSlider(100, 10000, 100, 0,1); //loc, freq, size, stepsize
+  filterSlider.position(130, 200);
+  filterSlider.mouseMoved(()=> {
+    filterSlider.value(); // anything with a .value can be ramped / used / automatically ramp instead of using slider
+  })
+}
 
 function draw() {
-  background(100, 220, 150);
+  background(100, 170, 200);
 
-  text("Q = Sine", 150, 150);
-  text("W = Square", 150, 175);
-  text("E = Triangle", 150, 200);
-  text("R = Sawtooth", 150, 225);
 }
 
+//can ramp to othe types of effects
+// Ex: any that uses .value()
+//in keyPressed, rampTo value
+//in keyReleased, set frequency back to 0
+//also works for delay.feedback.rampTo
 
+
+
+
+
+//set up for project example code for loading and calling sound w/ image (need to make own sound / get code for draw function)
+
+
+
+// function preload() {
+//   //mouse = loadImage();
+// }
+
+// function setup(){
+//   createCanvas(400,400);
+// }
+
+// function draw() {
+  //
+// }
+
+// let soundFX = newTone.Players({
+//   //squeaks: "sound.mp3"
+
+// }).toDestination();
+
+// function mousePressed() {
+//   soundFX.player("squeaks").start();
+// }
+
+// function mouseReleased() {
+//   soundFX.player("squeaks").stop();
+// }

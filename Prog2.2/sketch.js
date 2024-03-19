@@ -3,6 +3,8 @@ let synth = new Tone.Synth;
 let membraneSynth = new Tone.PolySynth(Tone.MembraneSynth); 
 let metalSynth = new Tone.MonoSynth(Tone.MetalSynth);
 
+let volume = new Tone.Volume(-12)
+
 //add more synth options w/ dropdown menu to switch between
 
 //set up notes

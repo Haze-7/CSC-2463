@@ -3,7 +3,8 @@
 //let synth = new Tone.Synth;
 let membraneSynth = new Tone.PolySynth(Tone.MembraneSynth); 
 // let metalSynth = new Tone.MonoSynth(Tone.MetalSynth);
-
+let volume = new Tone.Volume(5)
+let reverbLevel = new Tone.Reverb(1.75); 
 //sprite setup
 let sprite;
 let lookingLeft = false;
@@ -14,41 +15,13 @@ let shotXPos;
 let shotYPos;
 let shotXVel;
 
+let target1;
+let target2;
+let numOfTargets = 0;
 
 
-//GamePlan:
-
-//make tank sprite that drives left and right and shoots DONE DONE DONE
-//tank makes noise while moving
-//tank makes noise while shooting and does animation
 
 
-//TO DO
-//sprite sheet DONE
-//walking/driving animation DONE
-//shoot animation DONE
-//shoot function DONE
-//mouse pressed function DONE
-//add ^^ 
-//create gun sound / move sound
-//link sound to action
-
-//set up notes
-//may only need one or two
-// let notes = {
-//   'a' : 'C6', // replace / change later
-//   'w' : 'C#6', // #w 
-//   's' : 'D6',
-//   'e' : 'D#6', // #e 
-//   'd' : 'F6',
-//   'r' : 'F#6', //#r
-//   'f' : 'G6',
-//   't' : 'G#6', //#t
-//   'g' : 'A6',
-//   'y' : 'A#6', //#y
-//   'h' : 'B6',
-//   'j' : 'C6'
-// }
 //fix and set to appropriate sound path
 // synth.connect(bend); // route synth to bend
 // bend.toDestination(); // route bend to audio out
@@ -56,7 +29,12 @@ let shotXVel;
 // bend.toDestination(); // route bend to audio out
 // metalSynth.connect(bend); // route synth to bend
 // bend.toDestination(); // route bend to audio out
-membraneSynth.toDestination();
+// membraneSynth.connect(reverbLevel);
+// reverbLevel.toDestination(volume);
+membraneSynth.connect(volume);
+volume.connect(reverbLevel);
+reverbLevel.toDestination();
+
 
 function preload() {
   sprite = new Sprite(200, 200, 42, 39);
@@ -82,6 +60,8 @@ function setup() {
 function draw() {
   background(0);
   
+
+  
   textSize(20); // set text size
   fill("white");
   text("Welcome to Tank Shooter Demo", 55, 20);
@@ -92,6 +72,9 @@ function draw() {
   text("Move Right: Press D", 12, 50);
   text("Move Left: Press A", 12, 60);
   text("Shoot: Press LMB", 12, 70);
+
+  targets();
+
   if (kb.pressing('d'))
   {
     driveRight()
@@ -115,8 +98,8 @@ function draw() {
 function mouseClicked() {
       shoot();
     console.log("shooting");
-
-    membraneSynth.triggerAttackRelease("C2", "8n"); // can include time (0.2) if no keyreleased
+    //play sound on shot
+    membraneSynth.triggerAttackRelease("C1", "8n"); // can include time (0.2) if no keyreleased
 }
 
 
@@ -170,6 +153,20 @@ function shoot() {
   shot.vel.x = shotXVel;;
   shot.vel.y = 0;
   
+}
+
+function targets()
+{
+  if (numOfTargets == 2)
+  {
+    
+    target1 = new Sprite(385, 195, 25, 25);
+
+    target2 = new Sprite(15, 195, 25, 25);
+    a
+  }
+  numOfTargets++;
+
 }
 
 

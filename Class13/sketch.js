@@ -1,74 +1,125 @@
-let noise = new Tone.Noise("brown"); //pink, brown, or white sound
-let filter = new Tone.Filter(200, "lowpass"); // highpass, lowpass, bandpass / # is cut off frequency
-//w/ highpass use 5000
+//squencing / loops
+let sequence1, square;
+let melody = ["C3", ["E3", "G3", "D3", "C3"], "A3", "B2", "C2", "E3", ["A2", "G2"], "C4"];// array of sounds to play
+//put inside [] to play them together ^^
 
-let filterSlider;
-
-noise.connect(filter);
-filter.toDestination();
-
-function keyPressed() { // another way to check for action
-  if (key === 'q')
-  {
-    filter.frequency.rampTo(10000, 3) // automatically increases frequency (like a slider) over set time / 5000 instead of 10 w/ highpass / goes high to low
-    noise.start();
+square = new Tone.Synth({
+  oscillator: {
+    type: "square"
+  },
+  envenlope : {
+    attack: 0.8,
+    decay: 0.1,
+    sustain: 1,
+    release: 0.1
   }
-  else if (key === 'w')
-  {
-    noise.stop();
-    filter.frequency.value = 5000;
-  }
+}).toDestination();
+
+//create sequence object
+//will continue till released (ex, stop when gameOver = true)
+sequence1 = new Tone.Sequence(function (time, note){
+  square.triggerAttackRelease(note, 0.8);
+  }, melody, "4n");
+
+//how tcomputer keeps track of it
+Tone.Transport.start();
+Tone.Transport.bpm.Value = 100;
+Tone.Transport.timeSignature = [3,4]; // ??
+//beat per minute
+//great way to speed things up
+
+
+function mousePressed() { // another way to check for action
+  Tone.start(); // starts tone
+  sequence1.start(); //starts the clock of the sequencer (starts tracking, but doesn't start till this)
+}
+
+function mouseReleased() {
+  sequence1.stop();
 }
 
 function setup() { 
   createCanvas(400, 400);
-  filterSlider = createSlider(100, 10000, 100, 0,1); //loc, freq, size, stepsize
-  filterSlider.position(130, 200);
-  filterSlider.mouseMoved(()=> {
-    filterSlider.value(); // anything with a .value can be ramped / used / automatically ramp instead of using slider
-  })
+
 }
 
 function draw() {
+  //mouseIsPressed thing for image (not included)
+  //cant use ^ for sound, must do outside
   background(100, 170, 200);
-
+  text("Hold mouse for Sound", 150, 200)
 }
 
-//can ramp to othe types of effects
-// Ex: any that uses .value()
-//in keyPressed, rampTo value
-//in keyReleased, set frequency back to 0
-//also works for delay.feedback.rampTo
 
 
+//AM / FM Synth
 
 
+// let amSynth = new Tone.AMSynth().toDestination();
+// amSynth.type = 'sine';
+// amSynth.harmonicity.value = .4; // ratio between amp and frquency / sticks/ posts location
+// //noisier or less noisy
+// //easier way to use / replace regular synth
 
-//set up for project example code for loading and calling sound w/ image (need to make own sound / get code for draw function)
+// //frequency modulation
+// let FMSynth = new Tone.FMSynth().toDestination();
+// FMSynth.type = 'sine';
+// //main to values you need to set / only
+// FMSynth.harmonicity.value = 0.1; // ratio ^^
+// FMSynth.modulationIndex = 0.2; // similar to harmonicity/ combination does magic / 0 - 1 range
 
-
-
-// function preload() {
-//   //mouse = loadImage();
+// let notes = {
+//   'a' : 'C4',
+//   's' : 'D4',
+//   'd' : 'E4',
+//   'f' : 'F4',
+//   'g' : 'G4',
+//   'h' : 'A4',
+//   'j' : 'F4',
+//   'k' : 'C5'
 // }
 
-// function setup(){
-//   createCanvas(400,400);
+// function keyPressed() { // another way to check for action
+//   amSynth.triggerAttack('c4'); // can add 2nd param (time) to repalce key Released
+// }
+
+// function keyReleased() {
+//   amSynth.trigggerRelease();
+// }
+
+// function setup() { 
+//   createCanvas(400, 400);
+
 // }
 
 // function draw() {
-  //
+//   //mouseIsPressed thing for image (not included)
+//   //cant use ^ for sound, must do outside
+//   background(100, 170, 200);
+//   text("Play A-K for synth", 150, 200)
 // }
 
-// let soundFX = newTone.Players({
-//   //squeaks: "sound.mp3"
 
-// }).toDestination();
 
-// function mousePressed() {
-//   soundFX.player("squeaks").start();
+//oscilator / LFO Code
+
+// let osc = new Tone.Synth(100, 'sine').toDestination();
+// let lfo = new Tone.LFO(10, 100, 310).connect(osc.frequency).start(); // (how often oscilates(beep speed), bot freq, top freq << both are range used)
+
+// function keyPressed() { // another way to check for action
+// osc.triggerAttack();
 // }
 
-// function mouseReleased() {
-//   soundFX.player("squeaks").stop();
+// function keyReleased() {
+//   osc.triggerRelease();
+// }
+
+// function setup() { 
+//   createCanvas(400, 400);
+
+// }
+
+// function draw() {
+//   background(100, 170, 200);
+//   text("Press any key for LFO", 150, 200)
 // }

@@ -154,7 +154,6 @@ function targets()
     target1 = new Sprite(385, 195, 25, 25); // create right target sprite
 
     target2 = new Sprite(15, 195, 25, 25); // create left target sprite
-    a
   }
   numOfTargets++; 
 

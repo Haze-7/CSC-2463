@@ -1,8 +1,10 @@
 
 //sound setup
 let membraneSynth = new Tone.PolySynth(Tone.MembraneSynth); 
+let filter = new Tone.Filter(200, "lowpass"); // low pass for low notes / # is cut off frequency
 let volume = new Tone.Volume(5) // create / set volume effect
 let reverbLevel = new Tone.Reverb(1.75); //create / set revert effect/ level
+
 
 //tank sprite setup
 let sprite;
@@ -22,7 +24,8 @@ let target2;
 let numOfTargets = 0;
 
 //Sound pathing
-membraneSynth.connect(volume); // run through volume first
+membraneSynth.connect(filter); // run through volume first
+filter.connect(volume);
 volume.connect(reverbLevel); // pipe through revereb effect
 reverbLevel.toDestination(); // out to speakers
 

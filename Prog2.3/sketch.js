@@ -158,11 +158,3 @@ function targets()
   numOfTargets++; 
 
 }
-
-
-
-
-
-
-
-

@@ -1,7 +1,7 @@
 
 //sound setup
-// let synth = new Tone.Synth;
-// let membraneSynth = new Tone.PolySynth(Tone.MembraneSynth); 
+//let synth = new Tone.Synth;
+let membraneSynth = new Tone.PolySynth(Tone.MembraneSynth); 
 // let metalSynth = new Tone.MonoSynth(Tone.MetalSynth);
 
 //sprite setup
@@ -34,6 +34,7 @@ let shotXVel;
 //link sound to action
 
 //set up notes
+//may only need one or two
 // let notes = {
 //   'a' : 'C6', // replace / change later
 //   'w' : 'C#6', // #w 
@@ -48,10 +49,16 @@ let shotXVel;
 //   'h' : 'B6',
 //   'j' : 'C6'
 // }
+//fix and set to appropriate sound path
+// synth.connect(bend); // route synth to bend
+// bend.toDestination(); // route bend to audio out
+// membraneSynth.connect(bend); // route synth to bend
+// bend.toDestination(); // route bend to audio out
+// metalSynth.connect(bend); // route synth to bend
+// bend.toDestination(); // route bend to audio out
+membraneSynth.toDestination();
 
 function preload() {
-  spriteSheet = loadImage("assets/tank.png");
-
   sprite = new Sprite(200, 200, 42, 39);
   sprite.spriteSheet= "assets/tank.png";
   let animations = { //define as object
@@ -60,7 +67,7 @@ function preload() {
     shoot: {row: 0, col: 2, frames: 2},
     
   };
-  sprite.anis.frameDelay = 14;//how many frames to wait before going to next frame / sets speed
+  sprite.anis.frameDelay = 15;//how many frames to wait before going to next frame / sets speed
   sprite.addAnis(animations); //
   sprite.changeAni("driveRight"); //sets animation to 60fps
 
@@ -75,7 +82,16 @@ function setup() {
 function draw() {
   background(0);
   
-
+  textSize(20); // set text size
+  fill("white");
+  text("Welcome to Tank Shooter Demo", 55, 20);
+  textSize(12);
+  text("Controls:", 10, 35);
+  textSize(7);
+  fill("cyan");
+  text("Move Right: Press D", 12, 50);
+  text("Move Left: Press A", 12, 60);
+  text("Shoot: Press LMB", 12, 70);
   if (kb.pressing('d'))
   {
     driveRight()
@@ -99,6 +115,8 @@ function draw() {
 function mouseClicked() {
       shoot();
     console.log("shooting");
+
+    membraneSynth.triggerAttackRelease("C2", "8n"); // can include time (0.2) if no keyreleased
 }
 
 

@@ -1,12 +1,13 @@
 
 //sound setup
-//let synth = new Tone.Synth;
 let membraneSynth = new Tone.PolySynth(Tone.MembraneSynth); 
-// let metalSynth = new Tone.MonoSynth(Tone.MetalSynth);
-let volume = new Tone.Volume(5)
-let reverbLevel = new Tone.Reverb(1.75); 
-//sprite setup
+let volume = new Tone.Volume(5) // create / set volume effect
+let reverbLevel = new Tone.Reverb(1.75); //create / set revert effect/ level
+
+//tank sprite setup
 let sprite;
+
+//shot sprite setup
 let lookingLeft = false;
 let bullet;
 let shot;
@@ -15,28 +16,19 @@ let shotXPos;
 let shotYPos;
 let shotXVel;
 
+//targets sprite setup
 let target1;
 let target2;
 let numOfTargets = 0;
 
-
-
-
-//fix and set to appropriate sound path
-// synth.connect(bend); // route synth to bend
-// bend.toDestination(); // route bend to audio out
-// membraneSynth.connect(bend); // route synth to bend
-// bend.toDestination(); // route bend to audio out
-// metalSynth.connect(bend); // route synth to bend
-// bend.toDestination(); // route bend to audio out
-// membraneSynth.connect(reverbLevel);
-// reverbLevel.toDestination(volume);
-membraneSynth.connect(volume);
-volume.connect(reverbLevel);
-reverbLevel.toDestination();
+//Sound pathing
+membraneSynth.connect(volume); // run through volume first
+volume.connect(reverbLevel); // pipe through revereb effect
+reverbLevel.toDestination(); // out to speakers
 
 
 function preload() {
+  //create tank sprite, its animations, and framerate/ default state
   sprite = new Sprite(200, 200, 42, 39);
   sprite.spriteSheet= "assets/tank.png";
   let animations = { //define as object
@@ -46,8 +38,8 @@ function preload() {
     
   };
   sprite.anis.frameDelay = 15;//how many frames to wait before going to next frame / sets speed
-  sprite.addAnis(animations); //
-  sprite.changeAni("driveRight"); //sets animation to 60fps
+  sprite.addAnis(animations); 
+  sprite.changeAni("driveRight"); 
 
 
 }
@@ -59,9 +51,8 @@ function setup() {
 
 function draw() {
   background(0);
-  
 
-  
+  //display UI / Game Instructions
   textSize(20); // set text size
   fill("white");
   text("Welcome to Tank Shooter Demo", 55, 20);
@@ -75,31 +66,31 @@ function draw() {
 
   targets();
 
-  if (kb.pressing('d'))
+  if (kb.pressing('d')) // drive right key check
   {
     driveRight()
-    lookingLeft = false;
+    lookingLeft = false; // show that tank is NOT moving left for shot calculation
     
   
   }
-  else if (kb.pressing('a'))
+  else if (kb.pressing('a')) // drive left key check
   {
     driveLeft();
-    lookingLeft = true;
+    lookingLeft = true; // show that tank is moving left for shot calculation
   }
   else 
   {
-    stop();
+    stop(); // if not moving, just stop
   }
 
 
 }
 //add sound (in shoot)
 function mouseClicked() {
-      shoot();
+      shoot(); // shoot gun / run function when mouse pressed
     console.log("shooting");
     //play sound on shot
-    membraneSynth.triggerAttackRelease("C1", "8n"); // can include time (0.2) if no keyreleased
+    membraneSynth.triggerAttackRelease("C1", "8n"); // trigger sound que for shot when mouse is clicked
 }
 
 
@@ -131,41 +122,41 @@ function driveLeft() {
 function shoot() {
   //set movement of sprite tank
   sprite.changeAni("shoot");
-  sprite.vel.x = .5;
+  sprite.vel.x = .5; // slow down when shooting
 
-  shotXPos = sprite.position.x + 25;
-  shotYPos = sprite.position.y - 5.2;
-  shotXVel = 3;
+  shotXPos = sprite.position.x + 25; // right shot position
+  shotYPos = sprite.position.y - 5.2; // right shot position
+  shotXVel = 3; // makes bullet go right
 
-  if (lookingLeft === true)
+  if (lookingLeft === true) // if tank is looking left, move shot location to match tank barrel
   {
-    shotXPos = sprite.position.x - 25;
-    shotYPos = sprite.position.y - 5.2;
-    shotXVel = -3;
+    shotXPos = sprite.position.x - 25; // left shot position
+    shotYPos = sprite.position.y - 5.2; // left shot position
+    shotXVel = -3; // makes bullet go left
     
   }
 
   //set bullet movement / creation
-  shot = new Sprite(shotXPos, shotYPos, 10, 10);
-  shot.scale.x = 0.5;
-  shot.scale.y = 0.5;
+  shot = new Sprite(shotXPos, shotYPos, 10, 10); // create bullet sprite object to shoot
+  shot.scale.x = 0.5; // set x size of bullet
+  shot.scale.y = 0.5; // set y size of bullet
 
-  shot.vel.x = shotXVel;;
+  shot.vel.x = shotXVel; //set velocity of bullet
   shot.vel.y = 0;
   
 }
-
+//creates 2 temporary targets for the tank to knock out
 function targets()
 {
   if (numOfTargets == 2)
   {
     
-    target1 = new Sprite(385, 195, 25, 25);
+    target1 = new Sprite(385, 195, 25, 25); // create right target sprite
 
-    target2 = new Sprite(15, 195, 25, 25);
+    target2 = new Sprite(15, 195, 25, 25); // create left target sprite
     a
   }
-  numOfTargets++;
+  numOfTargets++; 
 
 }
 

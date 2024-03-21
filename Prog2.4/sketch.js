@@ -1,7 +1,7 @@
 
 //sound stuff from before, change to fit bug squish
 let membraneSynth = new Tone.PolySynth(Tone.MembraneSynth); 
-let filter = new Tone.Filter(200, "lowpass"); // low pass for low notes / # is cut off frequency
+let filter = new Tone.Filter(200, "lowpass"); // low pass for low notes / # is cut off frequency // trigger low pass in end screen to show that game is over
 let volume = new Tone.Volume(5) // create / set volume effect
 let reverbLevel = new Tone.Reverb(1.75); //create / set revert effect/ level
 
@@ -153,6 +153,7 @@ class Bug {
 
   function isBugSquished() {
     return this.isSquished; // check for bug being squished to make sure it can't be messed with again/ after
+    //maybe play sound if bug is missed / not
   }
   //display Menu text
   //get input to start
@@ -251,7 +252,7 @@ class Bug {
        //do border / bounds (make function?)
   }
   function endScreen() {
-    background(160,82,45);
+    background(130,82,45);
     text("Good Job!", width / 3, (height / 16));
     text("Final Score: "+ bugsSquished, 100, 300);
     text("Press " + restartKey + " to play again.", 300, 400);
@@ -278,7 +279,7 @@ class Bug {
         timeLeft = 30;
     }
   }
-  function mouseReleased() { // detect press on bug / stop dragging
+  function mouseClicked() { // detect press on bug / stop dragging
 
     bugs.forEach((bug) => {
       if (!bug.isSquished && gameScreen === 'playing') // check if game is playing & the bug isn't already squished

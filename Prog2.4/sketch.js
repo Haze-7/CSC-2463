@@ -9,12 +9,14 @@ let reverbLevel = new Tone.Reverb(1.75); //create / set revert effect/ level
 
 let sounds;
 
-
 sounds = new Tone.Players({
   //squish: ,
-  //backgroundMusic: "assets/introMusic.mp3"
+  introMusic: "assets/introMusic.mp3"
 
 });
+
+sounds.player('introMusic').autostart = true; // starts music when app opened
+sounds.player('introMusic').loop;
 
 //sounds.player('backgroundMusic').playbackRate = playbackRate; // set / change speed of background music
 
@@ -181,15 +183,16 @@ class Bug {
   //set playing to true
   function startMenu() {
     background(120,82,45);
+    
     text("Welcome to Bug Squish!", width / 3, (height / 16));
     text("You will have 30 seconds to squish as many bugs as you can!", 100, 300);
     text("Press space to start the Timer.", 300, 400);
     //backgroundMusic.start();
     //add effects like backgroundMusic.reverse() = true;
-    volumeLevel = 0;
+
 
     if (key === ' ') {
-        //sounds.player('backgroundMusic').start();
+        sounds.player('introMusic').stop();
         gameScreen = 'playing';
         startSpawn = true;
     }

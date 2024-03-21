@@ -2,6 +2,7 @@
 let sequence1, square;
 let melody = ["C3", ["E3", "G3", "D3", "C3"], "A3", "B2", "C2", "E3", ["A2", "G2"], "C4"];// array of sounds to play
 //put inside [] to play them together ^^
+//will automatically loop
 
 square = new Tone.Synth({
   oscillator: {

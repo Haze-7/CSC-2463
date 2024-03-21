@@ -1,4 +1,5 @@
 let volumeLevel = -3;
+let playbackRate = 1;
 
 //sound stuff from before, change to fit bug squish
 let membraneSynth = new Tone.PolySynth(Tone.MembraneSynth); 
@@ -11,9 +12,11 @@ let sounds;
 
 sounds = new Tone.Players({
   //squish: ,
-  backgroundMusic: "assets/backgroundMusic.mp3"
+  //backgroundMusic: "assets/introMusic.mp3"
 
 });
+
+//sounds.player('backgroundMusic').playbackRate = playbackRate; // set / change speed of background music
 
 
 
@@ -186,7 +189,7 @@ class Bug {
     volumeLevel = 0;
 
     if (key === ' ') {
-        sounds.player('backgroundMusic').start();
+        //sounds.player('backgroundMusic').start();
         gameScreen = 'playing';
         startSpawn = true;
     }
@@ -202,8 +205,10 @@ class Bug {
     //ex: if (timeLeft <= or keeps decrementing), increase speed (maybe. playbackRate)
 
     timeLeft -= deltaTime / 1000; //track time (deltaTime) convert from milli -> seconds (/1000)
+
     if (timeLeft <= 0)
     {
+      //sounds.player('backgroundMusic').stop();
       gameScreen = 'endScreen';
       timeLeft = 0;
     }
@@ -292,7 +297,7 @@ class Bug {
         //reset/ restart gane
         //endScreenBackgroundMusic.stop()
         //maybe start pay song when below is true (gameScreen == playing)
-        sounds.player('backgroundMusic').start();
+        //sounds.player('backgroundMusic').start();
         gameScreen = 'playing';
         startSpawn = true; // maybe use to start play music
         speed = 1;
@@ -310,6 +315,7 @@ class Bug {
           bug.squish(); //squish it
           bugsSquished++; // and to counter
           speed += 0.3; // increase speed
+          
 
           //add squish noise on mouse Click
           //squish.triggerAttackRelease? (squishSouns, time)

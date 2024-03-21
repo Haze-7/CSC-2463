@@ -8,7 +8,7 @@ square = new Tone.Synth({
   oscillator: {
     type: "square"
   },
-  envenlope : {
+  envelope : {
     attack: 0.8,
     decay: 0.1,
     sustain: 1,

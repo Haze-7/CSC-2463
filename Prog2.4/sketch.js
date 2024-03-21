@@ -1,17 +1,25 @@
+let volumeLevel = -3;
 
 //sound stuff from before, change to fit bug squish
 let membraneSynth = new Tone.PolySynth(Tone.MembraneSynth); 
 let filter = new Tone.Filter(200, "lowpass"); // low pass for low notes / # is cut off frequency // trigger low pass in end screen to show that game is over
-let volume = new Tone.Volume(5) // create / set volume effect
+let volume = new Tone.Volume(volumeLevel) // create / set volume effect
 let reverbLevel = new Tone.Reverb(1.75); //create / set revert effect/ level
 
-membraneSynth.connect(filter); // run through volume first
-filter.connect(volume);
-volume.connect(reverbLevel); // pipe through revereb effect
-reverbLevel.toDestination(); // out to speakers
+let sounds;
+
+
+sounds = new Tone.Players({
+  //squish: ,
+  backgroundMusic: "assets/backgroundMusic.mp3"
+
+});
+
+
 
 ///background music 
-let backgroundMusic = []; // insert notes in order to play them for background
+
+// let backgroundMusic = []; // insert notes in order to play them for background
 
 // ^^ should automatically loop, if not , use : backgroundMusic.loop;
 //set list of notes that loop
@@ -56,6 +64,15 @@ let startSpawn = false;
 let speed = 1;
 let restartKey = 'r';
 
+//music stuff connection
+// membraneSynth.connect(filter); // run through volume first
+// filter.connect(volume);
+// volume.connect(reverbLevel); // pipe through revereb effect
+// reverbLevel.toDestination(); // out to speakers
+
+sounds.connect(volume);
+volume.toDestination();
+
 function preload() {
 
   spriteSheet = loadImage("assets/Bug.png");
@@ -84,6 +101,7 @@ function draw() {
   { 
     startMenu();
     //maybe trigger song here
+
   }
   else if (gameScreen === 'endScreen')
   {
@@ -165,15 +183,17 @@ class Bug {
     text("Press space to start the Timer.", 300, 400);
     //backgroundMusic.start();
     //add effects like backgroundMusic.reverse() = true;
+    volumeLevel = 0;
 
     if (key === ' ') {
+        sounds.player('backgroundMusic').start();
         gameScreen = 'playing';
         startSpawn = true;
     }
   }
   function playing() {
     //game time counter
-   
+    
     text("Time Left:" + ceil(timeLeft), 30 , 45);
     text("Bugs Squashed: " + bugsSquished , width - 210 , 45);
     //playingBackgroundMusic.start();
@@ -272,6 +292,7 @@ class Bug {
         //reset/ restart gane
         //endScreenBackgroundMusic.stop()
         //maybe start pay song when below is true (gameScreen == playing)
+        sounds.player('backgroundMusic').start();
         gameScreen = 'playing';
         startSpawn = true; // maybe use to start play music
         speed = 1;
@@ -288,7 +309,7 @@ class Bug {
         {
           bug.squish(); //squish it
           bugsSquished++; // and to counter
-          speed += 0.1; // increase speed
+          speed += 0.3; // increase speed
 
           //add squish noise on mouse Click
           //squish.triggerAttackRelease? (squishSouns, time)

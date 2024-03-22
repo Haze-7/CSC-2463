@@ -29,7 +29,6 @@ Tone.Transport.timeSignature = [3,4]; // ??
 //beat per minute
 //great way to speed things up
 
-
 function mousePressed() { // another way to check for action
   Tone.start(); // starts tone
   sequence1.start(); //starts the clock of the sequencer (starts tracking, but doesn't start till this)

@@ -2,6 +2,7 @@
 let synth = new Tone.Synth;
 let membraneSynth = new Tone.PolySynth(Tone.MembraneSynth); 
 let metalSynth = new Tone.MonoSynth(Tone.MetalSynth);
+let AMSynth = new Tone.AMSynth();
 
 
 

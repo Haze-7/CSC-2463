@@ -1,56 +1,49 @@
 let volumeLevel = -3;
 let playbackRate = 1;
+let amSynth;
+let playMusicSequence;
 
 //sound stuff from before, change to fit bug squish
-let membraneSynth = new Tone.PolySynth(Tone.MembraneSynth); 
+//let membraneSynth = new Tone.PolySynth(Tone.MembraneSynth); 
 let filter = new Tone.Filter(200, "lowpass"); // low pass for low notes / # is cut off frequency // trigger low pass in end screen to show that game is over
 let volume = new Tone.Volume(volumeLevel) // create / set volume effect
-let reverbLevel = new Tone.Reverb(1.75); //create / set revert effect/ level
+
+amSynth = new Tone.AMSynth({ // finish / fix
+  envelope : {
+    oscillator: {
+      type: "square"
+    },
+    attack: 0.8,
+    decay: 0.1,
+    sustain: 1,
+    release: 0.1
+  }
+}).toDestination();
+
+let playMusic =["C3", ["E3", "G3", "D3", "C3"], "A3", "B2", "C2", "E3", ["A2", "G2"], "C4"];
+
+playMusicSequence = new Tone.Sequence(function (time, note){
+  amSynth.triggerAttackRelease(note, 0.8);
+  }, playMusic, "4n"); // finish / fix to run
 
 let sounds;
 
 sounds = new Tone.Players({
-  //squish: ,
-  introMusic: "assets/introMusic.mp3"
+  squish: "assets/splat.mp3", //gotten from youtube / free use
+  introMusic: "assets/introMusic.mp3" // created personally with the help of ableton playground
 
 });
-
+//effects on introMusic
 sounds.player('introMusic').autostart = true; // starts music when app opened
-sounds.player('introMusic').loop;
+sounds.player('introMusic').loop; // loop intromusic once finished
+sounds.player("introMusic").Filter;
 
+//effects on squish sound
+sounds.player('squish').playbackRate = 1.4; // speed up sound to be more realistic for game
+sounds.player('squish').volume = -.5; // make quieter slightly
 //sounds.player('backgroundMusic').playbackRate = playbackRate; // set / change speed of background music
 
-
-
-///background music 
-
-// let backgroundMusic = []; // insert notes in order to play them for background
-
-// ^^ should automatically loop, if not , use : backgroundMusic.loop;
-//set list of notes that loop
-//have unique ish one for each screen
-//options for implementation
-// make diff track / note list for each and start / stop
-//use same track, add/ remove/change values of effects and filters
-
-//start screen sound
-
-//play screen sound
-//bug squish
-//bg music
-//
-
 //end screen sound
-
-//if Have time, include bugs crawling sound and maybe bumping edge time
-
-//add sound (in shoot)
-// function mouseClicked() {
-//       shoot(); // shoot gun / run function when mouse pressed
-//     console.log("shooting");
-//     //play sound on shot
-//     membraneSynth.triggerAttackRelease("C1", "8n"); // trigger sound que for shot when mouse is clicked
-// }
 
 // start original bug squish code
 let sprite;
@@ -69,11 +62,6 @@ let startSpawn = false;
 let speed = 1;
 let restartKey = 'r';
 
-//music stuff connection
-// membraneSynth.connect(filter); // run through volume first
-// filter.connect(volume);
-// volume.connect(reverbLevel); // pipe through revereb effect
-// reverbLevel.toDestination(); // out to speakers
 
 sounds.connect(volume);
 volume.toDestination();
@@ -178,6 +166,7 @@ class Bug {
     return this.isSquished; // check for bug being squished to make sure it can't be messed with again/ after
     //maybe play sound if bug is missed / not
   }
+
   //display Menu text
   //get input to start
   //set playing to true
@@ -195,10 +184,14 @@ class Bug {
         sounds.player('introMusic').stop();
         gameScreen = 'playing';
         startSpawn = true;
+        //find way to start tone here
+
+        //get to work with : playMusicSequence.start(); 
     }
   }
   function playing() {
     //game time counter
+    
     
     text("Time Left:" + ceil(timeLeft), 30 , 45);
     text("Bugs Squashed: " + bugsSquished , width - 210 , 45);
@@ -318,10 +311,9 @@ class Bug {
           bug.squish(); //squish it
           bugsSquished++; // and to counter
           speed += 0.3; // increase speed
-          
 
-          //add squish noise on mouse Click
-          //squish.triggerAttackRelease? (squishSouns, time)
+          //play splat sound effect on squish/
+          sounds.player('squish').start();
         }
       }
       

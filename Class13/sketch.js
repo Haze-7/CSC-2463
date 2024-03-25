@@ -3,6 +3,8 @@ let sequence1, square;
 let melody = ["C3", ["E3", "G3", "D3", "C3"], "A3", "B2", "C2", "E3", ["A2", "G2"], "C4"];// array of sounds to play
 //put inside [] to play them together ^^
 //will automatically loop
+let volumeLevel = -25;
+let volume = new Tone.Volume(volumeLevel) // create / set volume effect
 
 square = new Tone.Synth({
   oscillator: {
@@ -14,7 +16,10 @@ square = new Tone.Synth({
     sustain: 1,
     release: 0.1
   }
-}).toDestination();
+})
+
+square.connect(volume);
+volume.toDestination();
 
 //create sequence object
 //will continue till released (ex, stop when gameOver = true)
@@ -24,8 +29,8 @@ sequence1 = new Tone.Sequence(function (time, note){
 
 //how tcomputer keeps track of it
 Tone.Transport.start();
-Tone.Transport.bpm.Value = 100;
-Tone.Transport.timeSignature = [3,4]; // ??
+Tone.Transport.bpm.Value = 1;
+Tone.Transport.timeSignature = [3,5]; // ??
 //beat per minute
 //great way to speed things up
 

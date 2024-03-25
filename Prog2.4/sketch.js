@@ -1,43 +1,54 @@
-let volumeLevel = -3;
+let volumeLevel = -6;
 let playbackRate = 1;
-let amSynth;
+let bgMusic;
 let playMusicSequence;
+
 
 //sound stuff from before, change to fit bug squish
 //let membraneSynth = new Tone.PolySynth(Tone.MembraneSynth); 
 let filter = new Tone.Filter(200, "lowpass"); // low pass for low notes / # is cut off frequency // trigger low pass in end screen to show that game is over
 let volume = new Tone.Volume(volumeLevel) // create / set volume effect
 
-amSynth = new Tone.AMSynth({ // finish / fix
-  envelope : {
-    oscillator: {
-      type: "square"
-    },
-    attack: 0.8,
-    decay: 0.1,
-    sustain: 1,
-    release: 0.1
-  }
-}).toDestination();
+let playMusic = [["G2","E3"], ["G3","F2"], ["C3", "B3"]];// array of sounds to play
 
-let playMusic =["C3", ["E3", "G3", "D3", "C3"], "A3", "B2", "C2", "E3", ["A2", "G2"], "C4"];
+bgMusic = new Tone.AMSynth({
+
+  envelope : {
+    attack: 0.3,
+    decay: 0.3,
+    sustain: 0.8,
+    release: 0.56
+  }
+})
+
+volumeLevel = 10;
+
+bgMusic.connect(volume);
+volume.connect(filter);
+filter.toDestination();
+
+
 
 playMusicSequence = new Tone.Sequence(function (time, note){
-  amSynth.triggerAttackRelease(note, 0.8);
-  }, playMusic, "4n"); // finish / fix to run
+  bgMusic.triggerAttackRelease(note, 0.4);
+  }, playMusic, "4n");
+
+Tone.Transport.start();
+
 
 let sounds;
 
 sounds = new Tone.Players({
   squish: "assets/splat.mp3", //gotten from youtube / free use
-  introMusic: "assets/introMusic.mp3" // created personally with the help of ableton playground
+  introMusic: "assets/introMusic.mp3", // created personally with the help of ableton playground
+  outroMusic: "assts/outroMusic.mp3" // reuse of intro, but with new effects
 
 });
+
 //effects on introMusic
 sounds.player('introMusic').autostart = true; // starts music when app opened
 sounds.player('introMusic').loop; // loop intromusic once finished
 sounds.player("introMusic").Filter;
-
 //effects on squish sound
 sounds.player('squish').playbackRate = 1.4; // speed up sound to be more realistic for game
 sounds.player('squish').volume = -.5; // make quieter slightly
@@ -61,7 +72,6 @@ let startOrientation = [0, 90, 180, 270];
 let startSpawn = false;
 let speed = 1;
 let restartKey = 'r';
-
 
 sounds.connect(volume);
 volume.toDestination();
@@ -185,6 +195,8 @@ class Bug {
         gameScreen = 'playing';
         startSpawn = true;
         //find way to start tone here
+        
+        playMusicSequence.start(); // start music sequence
 
         //get to work with : playMusicSequence.start(); 
     }
@@ -204,7 +216,8 @@ class Bug {
 
     if (timeLeft <= 0)
     {
-      //sounds.player('backgroundMusic').stop();
+      playMusicSequence.stop(); // start music sequence
+      Tone.Transport.stop();
       gameScreen = 'endScreen';
       timeLeft = 0;
     }
@@ -274,13 +287,11 @@ class Bug {
   }
   function endScreen() {
     background(130,82,45);
+
     text("Good Job!", width / 3, (height / 16));
     text("Final Score: "+ bugsSquished, 100, 300);
     text("Press " + restartKey + " to play again.", 300, 400);
-    //endScreenBackgroundMusic.start()
-    //add desired effects
-    //loop
-    //(below) end when restart key is pressed or gamestate changes
+    sounds.player("outroMusic").start();
     if (key === restartKey) {
       if (restartKey = 'r') // added to alternate restart key between r and space, resolves error where game skips straight to end scene
       {
@@ -291,9 +302,8 @@ class Bug {
         restartKey = 'r';
       }
         //reset/ restart gane
-        //endScreenBackgroundMusic.stop()
-        //maybe start pay song when below is true (gameScreen == playing)
-        //sounds.player('backgroundMusic').start();
+         // stop endscreen music
+
         gameScreen = 'playing';
         startSpawn = true; // maybe use to start play music
         speed = 1;
@@ -310,7 +320,8 @@ class Bug {
         {
           bug.squish(); //squish it
           bugsSquished++; // and to counter
-          speed += 0.3; // increase speed
+          speed += 0.2; // increase speed
+         
 
           //play splat sound effect on squish/
           sounds.player('squish').start();

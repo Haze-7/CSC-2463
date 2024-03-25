@@ -9,6 +9,7 @@ let playMusicSequence;
 let filter = new Tone.Filter(200, "lowpass"); // low pass for low notes / # is cut off frequency // trigger low pass in end screen to show that game is over
 let volume = new Tone.Volume(volumeLevel) // create / set volume effect
 
+
 let playMusic = [["G2","E3"], ["G3","F2"], ["C3", "B3"]];// array of sounds to play
 
 bgMusic = new Tone.AMSynth({
@@ -41,7 +42,7 @@ let sounds;
 sounds = new Tone.Players({
   squish: "assets/splat.mp3", //gotten from youtube / free use
   introMusic: "assets/introMusic.mp3", // created personally with the help of ableton playground
-  outroMusic: "assts/outroMusic.mp3" // reuse of intro, but with new effects
+  outroMusic: "assets/outroMusic.mp3" // reuse of intro, but with new effects
 
 });
 
@@ -52,9 +53,12 @@ sounds.player("introMusic").Filter;
 //effects on squish sound
 sounds.player('squish').playbackRate = 1.4; // speed up sound to be more realistic for game
 sounds.player('squish').volume = -.5; // make quieter slightly
-//sounds.player('backgroundMusic').playbackRate = playbackRate; // set / change speed of background music
 
-//end screen sound
+//effects on outroMusic
+sounds.player('outroMusic').loop; // loop intromusic once finished
+sounds.player("outroMusic").Filter;
+sounds.player("outroMusic").volume = -25;
+
 
 // start original bug squish code
 let sprite;
@@ -216,8 +220,9 @@ class Bug {
 
     if (timeLeft <= 0)
     {
-      playMusicSequence.stop(); // start music sequence
-      Tone.Transport.stop();
+      playMusicSequence.stop(); // send play music sequence
+      //Tone.Transport.stop();
+      sounds.player("outroMusic").start();
       gameScreen = 'endScreen';
       timeLeft = 0;
     }
@@ -291,7 +296,6 @@ class Bug {
     text("Good Job!", width / 3, (height / 16));
     text("Final Score: "+ bugsSquished, 100, 300);
     text("Press " + restartKey + " to play again.", 300, 400);
-    sounds.player("outroMusic").start();
     if (key === restartKey) {
       if (restartKey = 'r') // added to alternate restart key between r and space, resolves error where game skips straight to end scene
       {
@@ -303,7 +307,11 @@ class Bug {
       }
         //reset/ restart gane
          // stop endscreen music
-
+        sounds.player("outroMusic").stop();
+        //restart playing bg music
+        //Tone.Transport.start();
+        playMusicSequence.start(); // start music sequence
+        //reset / restart game valuesr
         gameScreen = 'playing';
         startSpawn = true; // maybe use to start play music
         speed = 1;

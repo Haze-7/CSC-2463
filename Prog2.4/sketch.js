@@ -167,12 +167,12 @@ class Bug {
     this.sprite.vel.y = 0;
     this.isSquished = true;
   }
-
   contains(x,y) {
     let insideX = x >= this.sprite.x && x <= this.sprite.x + 32;
     let insideY = y >= this.sprite.y && y <= this.sprite.y + 32;
    return insideX && insideY;
   }
+
 }
 
 

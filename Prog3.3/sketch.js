@@ -80,8 +80,9 @@ function draw() {
 
   angleMode(DEGREES);
   let rotateDeg = map(latest, 0, 1023, 0., 360.); //first 2 actual range, 2nd 2 range being mapped to
-
+  translate(width /2, height / 2);
   square(100, 100, 100);
+  rectMode(CENTER);
   rotate(rotateDeg);
 
   //test / show mouse clicked works w/ colors

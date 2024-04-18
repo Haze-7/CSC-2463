@@ -40,12 +40,13 @@ function draw() {
   background(220);
   
   //automatically open port
-  let usedPorts = usedSerialPorts();
-  if (usedPorts.length >0)
-  {
-    port.open(usedPorts[0], 9600);
-  }
+  // let usedPorts = usedSerialPorts();
+  // if (usedPorts.length >0)
+  // {
+  //   port.open(usedPorts[0], 9600);
+  // }
   //get data from arduino into p5
+
   let chars = port.available(); //read all available characters
   let str = port.read(chars); //reae chars brought in from port
   let lines = str.split("\n"); //split the string once it reaches a new line
@@ -73,20 +74,26 @@ function draw() {
   square(x, y, size);
 
   //effects inside will be kept inside
-  push();
-  rotate(rotation += speed);
-  pop();
+  //push();
+  
+  //pop();
+
+  angleMode(DEGREES);
+  let rotateDeg = map(latest, 0, 1023, 0., 360.); //first 2 actual range, 2nd 2 range being mapped to
+
+  square(100, 100, 100);
+  rotate(rotateDeg);
 
   //test / show mouse clicked works w/ colors
-  // fill(testColor);
-  // circle(50, 50, 50);
+   //fill(testColor);
+   circle(50, 50, 50);
 }
 //can maybe remove
 function connect() {
 
   if (!port.opened()) // check if port is opened or not
   {
-    port.open("Arduino, 9600"); // if not opened yet, open and set device, baub rate
+    port.open("Arduino", 9600); // if not opened yet, open and set device, baub rate
   }
   else
   {

@@ -45,6 +45,29 @@ function draw() {
   {
     port.open(usedPorts[0], 9600);
   }
+  //get data from arduino into p5
+  let chars = port.available(); //read all available characters
+  let str = port.read(chars); //reae chars brought in from port
+  let lines = str.split("\n"); //split the string once it reaches a new line
+  let latest = ""; //update latest instead of readUntil(may change)
+
+  if (lines.length > 0) //check to see if anything got through/ sent
+  {
+    let lastIndex = lines.length > 1 ? lines.length - 2 : lines.length - 1; //? comparison operator
+    latest = lines[lastIndex];
+  }
+  text(str, 10, 10); // print out whatever we read from serial port in javaScript page // old printout
+
+  let values = latest.split(","); //read latest
+
+  //way of sending message / data back to  arduino
+  if (port.opened() && frameCount % 3) //first check that port is open and do every third frame
+  {
+    let pixel = get(circleX, circleY);
+    let message = '${pixel[0]} ${pixel[1]} ${pixel[2]}\n'; //object array 
+    port.write(message); //send message every 60 frames per second
+    //write out values^^ over serial port
+  }
 
   fill("blue");
   square(x, y, size);
@@ -86,6 +109,7 @@ function mouseClicked() {
   }
   else{ // if click outside
     //turn off LED
+    
   }
 
 }

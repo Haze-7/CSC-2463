@@ -1,13 +1,6 @@
 
 let port;
 
-//p5 -> Arduino
-//Click on square to turn on LED light when click in box, turn off when click outside
-//use contains code / work with bugsquish to get ready for 3.4
-//Arduino -> p5
-// joystick? move into box, press when needed
-//once again work with joystick, or something else analog
-
 let connectButton; //can maybe be removed
 
 //box parameters
@@ -15,13 +8,12 @@ let x = 350;
 let y = 100;
 let size = 125;
 
-let ledColor = "";
+//background color values
+let red = 0;
+let blue = 0;
+let green = 0;
 
-//setup for knob
-//turn knob to turn arrow or object
-//track #'s of knob and use them to translate to movement on screen
-//Knob: 3 #s (0,0,0), figure out where or why they go 
-let rotation; 
+let fillColor; 
 
 
 function setup() {
@@ -37,64 +29,70 @@ function setup() {
 }
 
 function draw() {
-  background(220);
+  background(220, 125, 200);
+
+  let str = port.readUntil("\n"); // reads output until it sees () value
+
+  text(str, 25, 25); // print out whatever we read from serial port in javaScript page // old printout
+  console.log(str);
   
-  //automatically open port
-  // let usedPorts = usedSerialPorts();
-  // if (usedPorts.length >0)
-  // {
-  //   port.open(usedPorts[0], 9600);
-  // }
-  //get data from arduino into p5
-
-  let chars = port.available(); //read all available characters
-  let str = port.read(chars); //reae chars brought in from port
-  let lines = str.split("\n"); //split the string once it reaches a new line
-  let latest = ""; //update latest instead of readUntil(may change)
-
-  if (lines.length > 0) //check to see if anything got through/ sent
+  if (str >= 75)
   {
-    let lastIndex = lines.length > 1 ? lines.length - 2 : lines.length - 1; //? comparison operator
-    latest = lines[lastIndex];
+    red = 225;
+    green = 225;
+    blue = 225;
   }
-  text(str, 10, 10); // print out whatever we read from serial port in javaScript page // old printout
-
-  let values = latest.split(","); //read latest
-
-  //way of sending message / data back to  arduino
-  if (port.opened() && frameCount % 3) //first check that port is open and do every third frame
+  else if (str >= 55)
   {
-    let pixel = get(circleX, circleY);
-    let message = '${pixel[0]} ${pixel[1]} ${pixel[2]}\n'; //object array 
-    port.write(message); //send message every 60 frames per second
-    //write out values^^ over serial port
+    red = 195;
+    green = 195;
+    blue = 195;
   }
-
-  fill("blue");
-  square(x, y, size);
-
-  //effects inside will be kept inside
-  //push();
-  
-  //pop();
-
-  angleMode(DEGREES);
-  let rotateDeg = map(latest, 0, 1023, 0., 360.); //first 2 actual range, 2nd 2 range being mapped to
-  translate(width /2, height / 2);
-  square(100, 100, 100);
-  rectMode(CENTER);
-  rotate(rotateDeg);
+  else if (str >= 40)
+  {
+    red = 165;
+    green = 165;
+    blue = 165;
+  }
+  else if (str >= 30)
+  {
+    red = 130;
+    green = 130;
+    blue = 130 ;
+  }
+  else if (str >= 20)
+  {
+    red = 100;
+    green = 100;
+    blue = 100;
+  }
+  else
+  {
+    red = 50;
+    green = 50;
+    blue = 50;
+  }
 
   //test / show mouse clicked works w/ colors
-   //fill(testColor);
+  fillColor = color(red, blue, green);
+
+   fill(fillColor);
    circle(50, 50, 50);
+   square(x, y, size);
+
+   //send data back to LED
+  //  if (port.opened() && frameCount % 3) //first check that port is open and do every third frame
+  //  {
+  //    let message = ledState; //object array 
+  //    port.write(message); //send message every 60 frames per second
+  //    //write out values^^ over serial port
+  //  }
 }
-//can maybe remove
 function connect() {
 
   if (!port.opened()) // check if port is opened or not
   {
-    port.open("Arduino", 9600); // if not opened yet, open and set device, baub rate
+    port.open("Arduino", 4800); // if not opened yet, open and set device, baub rate
   }
   else
   {
@@ -109,14 +107,12 @@ function mouseClicked() {
 
   if (mouseX >= x && mouseX <= x + size && mouseY >= y && mouseY <= y + size)
   {
-  
-    //do arduino code / send data to turn on light
-    //turn on LED
+    //ledState = 'HIGH';
     
     console.log("mouseClicked");
   }
   else{ // if click outside
-    //turn off LED
+    //ledState = 'LOW'; 
     
   }
 

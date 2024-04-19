@@ -19,7 +19,7 @@ function setup() {
   port = createSerial(); // like sound, doesn't start on own/ require user to do something to get it to activate
   
   connectButton = createButton("Connect");
-  connectButton.mousePressed(connect);
+  connectButton.mousePressed(Connect);
 }
 
 function draw() {

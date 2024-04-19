@@ -45,7 +45,7 @@ function draw() {
     latest = lines[lastIndex];
   }
   //let str = port.readUntil("\n"); // reads output until it sees () value
-  //text(str, 10, 10); // print out whatever we read from serial port in javaScript page // old printout
+  text(str, 10, 10); // print out whatever we read from serial port in javaScript page // old printout
 
   let values = latest.split(","); //read latest
   //let values = str.split(","); //original w/ readuntil

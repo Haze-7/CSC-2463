@@ -92,6 +92,8 @@ let connectButton;
 let circleX;
 let circleY;
 let joySpeed = 3;
+//buzzer output
+let buzzerVal;
 
 function preload() {
 
@@ -118,6 +120,11 @@ function setup() {
   circleY = width /2; // put in middle of canvas
 
   port = createSerial(); // like sound, doesn't start on own/ require user to do something to get it to activate
+  
+  let usedPorts = usedSerialPorts();
+  if (usedPorts.length > 0) {
+    port.open(usedPorts[0], 57600);
+  }
   
   connectButton = createButton("Connect");
   connectButton.mousePressed(Connect);
@@ -155,6 +162,7 @@ function draw() {
 
     //modify circle X / Y location when moving ^^ joystick values
     //Joystick Movement
+    console.log(joyX, joyY, sw);
     if (joyX < 0)
     {
       circleX += joySpeed;
@@ -163,12 +171,12 @@ function draw() {
     {
       circleX -= joySpeed;
     }
-    // for y
-    if (joyY > 0)
+    // for ys
+    if (joyY < 0)
     {
       circleY += joySpeed;
     }
-    else if (joyY < 0)
+    else if (joyY > 0)
     {
       circleY -= joySpeed;
     }
@@ -184,7 +192,7 @@ function draw() {
     bugs.forEach((bug) => {
       if (!bug.isSquished && gameScreen === 'playing') // check if game is playing & the bug isn't already squished
       {
-        if (bug.contains(circle, circleY)) // if mouse is inside bug
+        if (bug.contains(circleX, circleY)) // if mouse is inside bug
         {
           bug.squish(); //squish it
           bugsSquished++; // and to counter
@@ -192,6 +200,10 @@ function draw() {
 
           //play splat sound effect on squish/
           sounds.player('squish').start();
+
+          //set buzzer sound
+          buzzerVal = 110;
+
         }
       }
       
@@ -206,7 +218,8 @@ function draw() {
     //make sure doesn't work unless above is true / on
 
   }
-  circle(circleX, circleY, 50); // draw circle in center of 50 diameter
+  //cursor circle
+  circle(circleX, circleY, 25); // draw circle in center of 50 diameter
 }
 class Bug {
   constructor (x, y, width, height, spriteSheet, animations) {

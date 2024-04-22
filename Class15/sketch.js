@@ -43,6 +43,7 @@ function draw() {
 
     //modify circle X / Y location when moving ^^ joystick values
     // for x
+    console.log(joyX, joyY, sw);
     if (joyX < 0)
     {
       circleX += speed;
@@ -52,11 +53,11 @@ function draw() {
       circleX -= speed;
     }
     // for y
-    if (joyY > 0)
+    if (joyY < 0)
     {
       circleY += speed;
     }
-    else if (joyY < 0)
+    else if (joyY > 0)
     {
       circleY -= speed;
     }

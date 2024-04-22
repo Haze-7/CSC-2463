@@ -45,10 +45,12 @@ function draw() {
     latest = lines[lastIndex];
   }
   //let str = port.readUntil("\n"); // reads output until it sees () value
-  text(str, 10, 10); // print out whatever we read from serial port in javaScript page // old printout
+  //text(str, 10, 10); // print out whatever we read from serial port in javaScript page // old printout
 
   let values = latest.split(","); //read latest
   //let values = str.split(","); //original w/ readuntil
+  text(values, 10, 10); // print out whatever we read from serial port in javaScript page // old printout
+
   if (values.length > 2) // just in case mid send error / check if full value
   {
     joyX = values[0];
@@ -61,12 +63,12 @@ function draw() {
     {
       circleX += speed;
     }
-    else if (joyX < 0)
+    else if (joyX > 0)
     {
       circleX -= speed;
     }
     // for y
-    if (joyY < 0)
+    if (joyY > 0)
     {
       circleY += speed;
     }
@@ -113,6 +115,5 @@ function connect() {
   {
     port.close() // only one thing can access port at a time
   }
-//when program starts, upon first button click will be asked to open serial port, select arduino Uno device from list and click connect
-
 }
+//when program starts, upon first button click will be asked to open serial port, select arduino Uno device from list and click connect

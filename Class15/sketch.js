@@ -11,13 +11,19 @@ let circleY;
 let speed = 3;
 
 function setup() {
-  createCanvas(400, 400);
+  createCanvas(700, 700);
 
   circleX = width / 2;
   circleY = width /2; // put in middle of canvas
 
   port = createSerial(); // like sound, doesn't start on own/ require user to do something to get it to activate
   
+  let usedPorts = usedSerialPorts();
+  if (usedPorts.length > 0) {
+    port.open(usedPorts[0], 57600);
+  }
+  
+
   connectButton = createButton("Connect");
   connectButton.mousePressed(Connect);
 }
@@ -41,12 +47,12 @@ function draw() {
     {
       circleX += speed;
     }
-    else if (joyX < 0)
+    else if (joyX > 0)
     {
       circleX -= speed;
     }
     // for y
-    if (joyY < 0)
+    if (joyY > 0)
     {
       circleY += speed;
     }
@@ -54,6 +60,7 @@ function draw() {
     {
       circleY -= speed;
     }
+
   }
   if (sw == 1) // now, pressing button on joystick changes color of circle
   {

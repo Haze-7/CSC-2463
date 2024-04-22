@@ -80,7 +80,6 @@ let bugsSquished = 0; // score
 let startOrientation = [0, 90, 180, 270];
 let startSpawn = false;
 let speed = 1;
-let restartKey = 'r';
 
 sounds.connect(volume);
 volume.toDestination();
@@ -155,7 +154,7 @@ function draw() {
     sw = Number(values[2]); // must change to number (makes member of number class)
 
     //modify circle X / Y location when moving ^^ joystick values
-    // for x
+    //Joystick Movement
     if (joyX < 0)
     {
       circleX += joySpeed;
@@ -174,15 +173,37 @@ function draw() {
       circleY -= joySpeed;
     }
 
+    //get mouseClicked transfered to joystick
+    //find a new way to track circle space
+    //replace mouseX / mouseY with circleX/Y
+    //either shrink circle or find way to include radius
   }
   if (sw == 1) // now, pressing button on joystick changes color of circle
   {
-    //fill("blue");
+    //fill("blue"); // I want to replace this with some other indication of click happening
+    bugs.forEach((bug) => {
+      if (!bug.isSquished && gameScreen === 'playing') // check if game is playing & the bug isn't already squished
+      {
+        if (bug.contains(circle, circleY)) // if mouse is inside bug
+        {
+          bug.squish(); //squish it
+          bugsSquished++; // and to counter
+          speed += 0.2; // increase speed
+
+          //play splat sound effect on squish/
+          sounds.player('squish').start();
+        }
+      }
+      
+    });
 
   }
   else
   {
     //fill(255);
+    //make to where it doesn't count if above not true, maybe boolean value
+    //could be boolean switchPressed
+    //make sure doesn't work unless above is true / on
 
   }
   circle(circleX, circleY, 50); // draw circle in center of 50 diameter
@@ -246,40 +267,35 @@ class Bug {
     //maybe play sound if bug is missed / not
   }
 
-  //display Menu text
-  //get input to start
-  //set playing to true
+  //Changes to be made:
+  //get input from joystick
+  //use input (switch) to start 
   function startMenu() {
     background(120,82,45);
     
     text("Welcome to Bug Squish!", width / 3, (height / 16));
     text("You will have 30 seconds to squish as many bugs as you can!", 100, 300);
     text("Press down on the Joystick to start the Timer.", 300, 400);
-    //backgroundMusic.start();
-    //add effects like backgroundMusic.reverse() = true;
-
-
-    if (key === ' ') {
+    text("This is your cursor, move around with the Joystick and press it to begin.", 100, 100);
+    //replace space press w/ joystick press
+    if (sw == 1) {
         sounds.player('introMusic').stop();
         gameScreen = 'playing';
-        startSpawn = true;
-        //find way to start tone here
-        
+        startSpawn = true;        
         playMusicSequence.start(); // start music sequence
 
-        //get to work with : playMusicSequence.start(); 
     }
   }
+  //Changes to be made:
+  //output to LED
+  //input from Joystick(maybe not)
+  //May not need to make changes here
   function playing() {
     //game time counter
     
     
     text("Time Left:" + ceil(timeLeft), 30 , 45);
     text("Bugs Squashed: " + bugsSquished , width - 210 , 45);
-    //playingBackgroundMusic.start();
-    //add effects to ^^
-    //work w/ time below to speed up as time expires
-    //ex: if (timeLeft <= or keeps decrementing), increase speed (maybe. playbackRate)
 
     timeLeft -= deltaTime / 1000; //track time (deltaTime) convert from milli -> seconds (/1000)
 
@@ -355,54 +371,52 @@ class Bug {
 
        //do border / bounds (make function?)
   }
+  //changes to be made
+  //change input to switch / joystick
+  //maybe change start / restart to click on button / specific area instead of straight click
+  //get outputs to led?
   function endScreen() {
     background(130,82,45);
 
     text("Good Job!", width / 3, (height / 16));
     text("Final Score: "+ bugsSquished, 100, 300);
-    text("Press " + restartKey + " to play again.", 300, 400);
-    if (key === restartKey) {
-      if (restartKey = 'r') // added to alternate restart key between r and space, resolves error where game skips straight to end scene
-      {
-        restartKey = ' ';
-      }
-      else
-      {
-        restartKey = 'r';
-      }
-        //reset/ restart gane
+    text("Press down on the joystick to play again.", 300, 400); // maybe change
+    if (sw == 1) { // if button pressed
+        //reset/ restart game
          // stop endscreen music
         sounds.player("outroMusic").stop();
         //restart playing bg music
-        //Tone.Transport.start();
         playMusicSequence.start(); // start music sequence
-        //reset / restart game valuesr
+        //reset / restart game values
         gameScreen = 'playing';
         startSpawn = true; // maybe use to start play music
         speed = 1;
         bugsSquished = 0;
         timeLeft = 30;
     }
+    //decide if else is necessary / needed
   }
-  function mouseClicked() { // detect press on bug / stop dragging
+  //replace function w/ joystick presses
+  //may need to move into draw / can't be own function
+  // function buttonPressed() { // detect press on bug / stop dragging
 
-    bugs.forEach((bug) => {
-      if (!bug.isSquished && gameScreen === 'playing') // check if game is playing & the bug isn't already squished
-      {
-        if (bug.contains(mouseX, mouseY)) // if mouse is inside bug
-        {
-          bug.squish(); //squish it
-          bugsSquished++; // and to counter
-          speed += 0.2; // increase speed
+  //   bugs.forEach((bug) => {
+  //     if (!bug.isSquished && gameScreen === 'playing') // check if game is playing & the bug isn't already squished
+  //     {
+  //       if (bug.contains(mouseX, mouseY)) // if mouse is inside bug
+  //       {
+  //         bug.squish(); //squish it
+  //         bugsSquished++; // and to counter
+  //         speed += 0.2; // increase speed
          
 
-          //play splat sound effect on squish/
-          sounds.player('squish').start();
-        }
-      }
+  //         //play splat sound effect on squish/
+  //         sounds.player('squish').start();
+  //       }
+  //     }
       
-    })
-  }
+  //   });
+  //}
   //Joystick
   function Connect() {
     //check if port is not open

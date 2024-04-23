@@ -93,7 +93,7 @@ let circleX;
 let circleY;
 let joySpeed = 3;
 //buzzer output
-let buzzerVal;
+let soundLevel = 0;
 
 function preload() {
 
@@ -181,6 +181,16 @@ function draw() {
       circleY -= joySpeed;
     }
 
+    //analog output to arduino
+    if (port.opened() && frameCount % 3) //first check that port is open and do every third frame
+    {
+      
+      let message = soundLevel ; //object array 
+      console.log(message);
+      port.write(message); //send message every 60 frames per second
+      //write out values^^ over serial port
+    }
+
     //get mouseClicked transfered to joystick
     //find a new way to track circle space
     //replace mouseX / mouseY with circleX/Y
@@ -199,11 +209,11 @@ function draw() {
           speed += 0.2; // increase speed
 
           //play splat sound effect on squish/
-          sounds.player('squish').start();
+          sounds.player('squish').start(); // maybe error here
 
-          //set buzzer sound
-          buzzerVal = 110;
-
+          //set buzzer sound to go off
+          soundLevel = 115;
+        
         }
       }
       
@@ -212,6 +222,8 @@ function draw() {
   }
   else
   {
+    //turn off buzzer when not squish
+    soundLevel = 0;
     //fill(255);
     //make to where it doesn't count if above not true, maybe boolean value
     //could be boolean switchPressed

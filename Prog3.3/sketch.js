@@ -37,9 +37,6 @@ function draw() {
   text("Click inside box to turn on LED, click outside to turn it off!", 100, 400);
   text("Play around with the light sensor to lighten or darken the shapes!", 100, 430);
 
-  
-
-
   let str = port.readUntil("\n"); // reads output until it sees () value
 
   text(str, 25, 25); // print out whatever we read from serial port in javaScript page // old printout

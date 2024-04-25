@@ -9,9 +9,26 @@ let gameOver = false;
 let gameEnd = false;
 let restartKey = 'r';
 
+let port;
+let connectButton;
+
 //new / vault code
+let buttonVal = 0;
+let knobVal = 0;
+let vaultState = 'locked'; // update like gameScreen closed = locked, cracked = opened
 let vaultCracked = false;
 let numOfKeys = 0; //# of keys to be solved for
+
+
+//keys to get into safe
+let key1 = Math.random(0,1012);
+let key2 = Math.random(0,1012);
+let key3 = Math.random(0,1012);
+
+let keyRange = 2;
+
+
+
 
 
 function preload() {
@@ -30,6 +47,16 @@ function setup() {
   textFont(gameFont); 
   gameScreen = 'start'; 
   //start background start sound
+
+  port = createSerial(); // like sound, doesn't start on own/ require user to do something to get it to activate
+  
+  let usedPorts = usedSerialPorts();
+  if (usedPorts.length > 0) {
+    port.open(usedPorts[0], 9600);
+  }
+
+  connectButton = createButton("Connect");
+  connectButton.mousePressed(Connect);
   
 }
 function draw() {
@@ -56,8 +83,19 @@ function draw() {
     playing();
     //maybe trigger song here
   }
-}
 
+  let str = port.readUntil("\n"); // reads output until it sees () value
+  //text(str, 10, 10); // print out whatever we read from serial port in javaScript page // old printout
+  let values = str.split(",");
+  if (values.length > 1)
+  {
+    knobVal = values[0];
+    buttonVal = values[1]; 
+  }
+
+  console.log(knobVal, buttonVal);
+  
+}
   //display Menu text
   //get input to start
   //set playing to true
@@ -89,6 +127,7 @@ function draw() {
     if (timeLeft <= 0)
     {
       gameScreen = 'failScreen';
+      vaultState = 'locked';
       timeLeft = 0;
     }
   }
@@ -153,4 +192,39 @@ function draw() {
 
   // create spinning animation
  }
+  //where the vault unlocking will occur
+  function vaultLock() {
+
+    //set vaultState to locked by default (done)
+
+    //set vault keys and times ( 0 - 1023)
+
+    //once key vals are gotten, set range for acceptable guesses
+
+    //check if answer is in range(key +/ - keyRange)
+
+
+
+
+
+
+    //when time runs out, if vault is locked, fail screen
+
+    //if vault is done before then, vict screen
+  }
+
+  function Connect() {
+    //check if port is not open
+    if (!port.opened()) // is port already opened or not?
+    {
+      port.open("Arduino", 9600); //if not already opened, then open it // first specifies allowed device / set baub rate (must match arduino)
+    }
+    else
+    {
+      port.close() // only one thing can access port at a time
+    }
+  //when program starts, upon first button click will be asked to open serial port, select arduino Uno device from list and click connect
+  
+  }
+ 
 

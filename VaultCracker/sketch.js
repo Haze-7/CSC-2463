@@ -9,6 +9,10 @@ let gameOver = false;
 let gameEnd = false;
 let restartKey = 'r';
 
+//new / vault code
+let vaultCracked = false;
+let numOfKeys = 0; //# of keys to be solved for
+
 
 function preload() {
 
@@ -30,16 +34,22 @@ function setup() {
 }
 function draw() {
   background(128,128,128);
+
+  //replace to accomidate new endscreens
   if (gameScreen === 'start')
   { 
     startMenu();
     //maybe trigger song here
 
   }
-  else if (gameScreen === 'endScreen')
+  else if (gameScreen === 'failScreen')
   {
-    endScreen();
+    failScreen();
     //maybe trigger song here
+  }
+  else if (gameScreen === 'victoryScreen')
+  {
+    victoryScreen();
   }
   else if (gameScreen === 'playing')
   {
@@ -51,6 +61,7 @@ function draw() {
   //display Menu text
   //get input to start
   //set playing to true
+  //add difficulty setting?
   function startMenu() {
     background(128,128,128);
     textSize(25);
@@ -77,13 +88,14 @@ function draw() {
     //find way to speed up timeLeft/ remove time for each incorrect answer
     if (timeLeft <= 0)
     {
-      gameScreen = 'endScreen';
+      gameScreen = 'failScreen';
       timeLeft = 0;
     }
   }
   //replace with victory / failure screens
   //either make new function for each ^^ 
   //or make if statement for boolean value
+  //will be effectively replaced
   function endScreen() {
     background(130,82,45);
 
@@ -108,11 +120,19 @@ function draw() {
   function failScreen() {
     //rect(0, 0, 300, 600);
     //rect(300, 0, 300, 600);
+
+    //start / play failure music 
+    //end music and restart game
+    //show stats? / old keys
   }
 
   //end screen for when player wins the game
   //have rain money and provide money earned and time remaining?
   function victoryScreen() {
+
+    //start / play victory song
+    //display money earned
+    //end music / reset game
 
   }
 

@@ -16,19 +16,16 @@ let connectButton;
 let buttonVal = 0;
 let knobVal = 0;
 let vaultState = 'locked'; // update like gameScreen closed = locked, cracked = opened
+let difficulty = 'easy';
 let vaultCracked = false;
 let numOfKeys = 0; //# of keys to be solved for
 
 
 //keys to get into safe
-let key1 = Math.random(0,1012);
-let key2 = Math.random(0,1012);
-let key3 = Math.random(0,1012);
-
-let keyRange = 2;
-
-
-
+let key1 = 0;
+// let key1 = Math.floor(Math.random() * 1023)
+// let key2 = Math.floor(Math.random() * 1023)
+// let key3 = Math.floor(Math.random() * 1023)
 
 
 function preload() {
@@ -52,7 +49,7 @@ function setup() {
   
   let usedPorts = usedSerialPorts();
   if (usedPorts.length > 0) {
-    port.open(usedPorts[0], 9600);
+    port.open(usedPorts[0], 2400);
   }
 
   connectButton = createButton("Connect");
@@ -93,7 +90,16 @@ function draw() {
     buttonVal = values[1]; 
   }
 
-  console.log(knobVal, buttonVal);
+
+  console.log(mouseX, mouseY);
+
+
+
+//console.log(key2);
+
+//console.log(key3);
+
+  //console.log(knobVal, buttonVal);
   
 }
   //display Menu text
@@ -115,12 +121,32 @@ function draw() {
     }
   }
   function playing() {
+
+    if (difficulty == 'hard') 
+    {
+      //set game stats to specific things
+      timeLeft = 15;
+    }
+    else if (difficulty == 'medium')
+    {
+      //set med stats
+      timeLeft = 30;
+
+    }
+    else if (difficulty == 'easy')
+    {
+      //set easy stats
+      timeLeft = 45;
+
+    }
+
     //game time counter
     text("Cops will Arrive in:" + ceil(timeLeft), 30 , 45);
     //text("Bugs Squashed: " + bugsSquished , width - 210 , 45); score
 
+    vaultCreation();
     //playing around with vault door
-    circle(width /2, height /2, 50);
+    //circle(width /2, height /2, 50);
 
     timeLeft -= deltaTime / 1000; //track time (deltaTime) convert from milli -> seconds (/1000) // time
     //find way to speed up timeLeft/ remove time for each incorrect answer
@@ -178,7 +204,31 @@ function draw() {
   //vault handle spins along with knob
  function vaultCreation (){
   //create Square
-
+  rectMode(CENTER);
+  push();
+    
+    fill(183, 186, 181);
+    square(width / 2, height / 2, 700);
+    fill(123, 125, 121)
+    rect(600, 178, 700 , 55);
+    rect(600, 822, 700, 55);
+    rect(923, 500  , 55, 700 );
+    rect(277, 500, 55, 700);
+    rect(30, 20, 55, 55);
+    
+    //vault handles
+    push() // x= 1200, y = 1000
+    circle(width /2, height / 2, 200);
+    noStroke();
+    //top
+    rect(600, 380, 35, 100);
+    //
+    rect(600, 380, 35, 100);
+  
+    rect(600, 380, 35, 100);
+    pop();
+  pop();
+  //rotate above ^^
   //create circle
 
 
@@ -198,6 +248,18 @@ function draw() {
     //set vaultState to locked by default (done)
 
     //set vault keys and times ( 0 - 1023)
+    if (difficulty == 'hard') 
+    {
+      //set game stats to specific things
+    }
+    else if (difficulty == 'medium')
+    {
+
+    }
+    else if (difficulty == 'easy')
+    {
+
+    }
 
     //once key vals are gotten, set range for acceptable guesses
 
@@ -206,11 +268,13 @@ function draw() {
 
 
 
-
-
     //when time runs out, if vault is locked, fail screen
 
     //if vault is done before then, vict screen
+  }
+// set random value for key for vault combination
+  function setKeys() {
+    return Math.floor(Math.random() * 1023)
   }
 
   function Connect() {

@@ -20,6 +20,9 @@ let difficulty = 'easy';
 let vaultCracked = false;
 let numOfKeys = 0; //# of keys to be solved for
 
+let centerX = 0;
+let centerY = 0;
+
 
 //keys to get into safe
 let key1 = 0;
@@ -42,7 +45,9 @@ function setup() {
   
   createCanvas(1200, 1000);
   textFont(gameFont); 
-  gameScreen = 'start'; 
+  gameScreen = 'start'; // set default screen upon opening game
+  
+  
   //start background start sound
 
   port = createSerial(); // like sound, doesn't start on own/ require user to do something to get it to activate
@@ -55,6 +60,8 @@ function setup() {
   connectButton = createButton("Connect");
   connectButton.mousePressed(Connect);
   
+  centerX = width / 2;
+  centerY = height / 2;
 }
 function draw() {
   background(128,128,128);
@@ -90,16 +97,15 @@ function draw() {
     buttonVal = values[1]; 
   }
 
+  //console.log(knobVal, buttonVal);
 
-  console.log(mouseX, mouseY);
+  console.log(mouseX - centerX, mouseY - centerY); // just for pixel measurein  delete
 
 
 
 //console.log(key2);
 
 //console.log(key3);
-
-  //console.log(knobVal, buttonVal);
   
 }
   //display Menu text
@@ -112,9 +118,9 @@ function draw() {
     text("Welcome to Safe Cracker!", width / 4, (height / 16));
     textSize(15);
     text("You will have 30 Seconds to Crack the Safe!", 270, 300);
-    text("Press space to play!", 430, 750);
+    text("Press button to play!", 430, 750);
 
-    if (key === ' ') {
+    if (buttonVal == 1) {
         gameScreen = 'playing';
         startSpawn = true;
 
@@ -205,27 +211,65 @@ function draw() {
  function vaultCreation (){
   //create Square
   rectMode(CENTER);
+  
   push();
     
     fill(183, 186, 181);
-    square(width / 2, height / 2, 700);
+    square(centerX, centerY, 700);
     fill(123, 125, 121)
     rect(600, 178, 700 , 55);
     rect(600, 822, 700, 55);
     rect(923, 500  , 55, 700 );
-    rect(277, 500, 55, 700);
-    rect(30, 20, 55, 55);
-    
+    rect(277, 500, 55, 700);    
+
     //vault handles
+    
+    angleMode(DEGREES);
+    translate(centerX, centerY); // set origin to middle
+    rotate(knobVal);
+    
     push() // x= 1200, y = 1000
-    circle(width /2, height / 2, 200);
     noStroke();
-    //top
-    rect(600, 380, 35, 100);
-    //
-    rect(600, 380, 35, 100);
-  
-    rect(600, 380, 35, 100);
+    circle(0, 0, 195); //set x / y to 0, 0 (origin) to translate / spin from center
+    //create knob / handles for opening vault
+    beginShape();
+      
+      vertex(-20, -135); // top left corner
+      vertex(20, -135); //top right corner
+      vertex(20, -45);// return corner top right
+      vertex(80, -110); // right top diag/ top left cornor
+      vertex(110, -80); // right top diag / top right corner
+      vertex(50, -20); // return
+      vertex(135, -20); //right top corner
+      vertex(135, 20); //right bot corner
+      vertex(50, 20); // return
+      vertex(110, 80); // bot right diag /right corner
+      vertex(80, 110); // bot right diag/ left corner
+      vertex(20, 50);// bot diag return
+      vertex(20, 135); //bot right corner
+      vertex(-20, 135); //bot left corner
+      vertex(-20, 50); //return
+      vertex(-80, 110); // bot left diag/ bot corner
+      vertex(-110, 80); // bot left diag / top corner
+      vertex(-50, 20); //return 
+      vertex(-135, 20); // left bot corner
+      vertex(-135, -20); // left top corner
+      vertex(-50, -20); // return
+      vertex(-110, -80); // right corner
+      vertex(-80, -110); // return
+      vertex(-20, -50);
+    endShape(CLOSE);
+    //rect(0, 0, 40, 270);
+  rotate(135);
+    fill('red');
+    //rect(0, 0 , 40, 270);
+
+    //rect(0, 0, 35, 250);
+
+    //rect(0, 0, 35, 250);
+
+    //top right
+    //rect(690, 390, 35, 100);
     pop();
   pop();
   //rotate above ^^
@@ -246,6 +290,7 @@ function draw() {
   function vaultLock() {
 
     //set vaultState to locked by default (done)
+    
 
     //set vault keys and times ( 0 - 1023)
     if (difficulty == 'hard') 

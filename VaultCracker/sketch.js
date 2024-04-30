@@ -37,6 +37,7 @@ let keyRangeTop = 0;
 let foundKey = false;
 let failAttempt = false;
 
+let keysRemaining = 0;
 let ledOutput = 0;
 //0 default
 //1 = green light
@@ -301,26 +302,30 @@ function draw() {
   function vaultLock() {
 
     //set vaultState to locked by default (done)
+    //set keysRemaining to # u want, decrement each time successful
     setKeyRange();
 
 
-    // if (knobVal >= keyRangeBottom && knobVal <= keyRangeTop)
-    // {
-    //   //set Green LED to go on
-    //   //move to next key / confirmation click
-    //   // set correct Key count, once reaches certain # you win
-    //   foundKey = true;
-    //   ledOutput = 1; // set green light on
-    // }
-    // else
-    // {
-    //   failAttempt = true;
-    //   ledOutput = 2; // set red light on
-    //   // set red LED to go off
-    //   //speed up time
-    //   //error buzzer sound
+    if (knobVal >= keyRangeBottom && knobVal <= keyRangeTop)
+    {
+      //set Green LED to go on
+      //move to next key / confirmation click
+      // set correct Key count, once reaches certain # you win
+      foundKey = true;
+      ledOutput = 1; // set green light on
+      keysRemaining--;
+    }
+    else
+    {
+      failAttempt = true;
+      ledOutput = 2; // set red light on
+      // set red LED to go off
+      //speed up time
+      //timeRemaining - 5;
+      //error buzzer sound
+      
 
-    // }
+    }
 
     //once key vals are gotten, set range for acceptable guesses
 
@@ -342,7 +347,6 @@ function draw() {
     keyRangeBottom = key - 10; // get top / bot vals
     keyRangeTop = key + 10;
 
-    //check for in range
 
   }
 

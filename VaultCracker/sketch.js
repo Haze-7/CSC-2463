@@ -36,6 +36,7 @@ let keyRangeTop = 0;
 //get option for red or green LED
 let foundKey = false;
 let failAttempt = false;
+let keyRangeSet = false;
 
 let keysRemaining = 0;
 let ledOutput = 0;
@@ -252,10 +253,21 @@ function draw() {
     
     push() // x= 1200, y = 1000
     noStroke();
+    push();
+      fill(64, 64, 64);
+      circle(0, 0, 220);
+    pop();
+
+    // fill(64, 64, 64);
+    // circle(0, 0, 350);
+
+    fill(123, 123, 123);
     circle(0, 0, 180); //set x / y to 0, 0 (origin) to translate / spin from center
+
+
+    
     //create knob / handles for opening vault
     beginShape();
-      
       vertex(-20, -135); // top left corner
       vertex(20, -135); //top right corner
       vertex(20, -45);// return corner top right
@@ -303,8 +315,12 @@ function draw() {
 
     //set vaultState to locked by default (done)
     //set keysRemaining to # u want, decrement each time successful
-    setKeyRange();
+    if (keyRangeSet == false)
+    {
+      setKeyRange();
+    }
 
+    console.log(knobVal);
 
     if (knobVal >= keyRangeBottom && knobVal <= keyRangeTop)
     {
@@ -314,6 +330,7 @@ function draw() {
       foundKey = true;
       ledOutput = 1; // set green light on
       keysRemaining--;
+      keyRangeSet = false;
     }
     else
     {
@@ -323,7 +340,7 @@ function draw() {
       //speed up time
       //timeRemaining - 5;
       //error buzzer sound
-      
+
 
     }
 
@@ -346,8 +363,9 @@ function draw() {
 
     keyRangeBottom = key - 10; // get top / bot vals
     keyRangeTop = key + 10;
+    keyRangeSet = true;
 
-
+    console.log(key);
   }
 
   function Connect() {

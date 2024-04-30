@@ -4,7 +4,7 @@ let animations;
 let gameFont;
 let spriteSheet;
 let gameScreen;
-let timeLeft = 30; // change to more reasonable time
+let timeLeft = 60; // change to more reasonable time
 let gameOver = false;
 let gameEnd = false;
 let restartKey = 'r';
@@ -17,7 +17,6 @@ let buttonVal = 0;
 let knobVal = 0;
 let vaultState = 'locked'; // update like gameScreen closed = locked, cracked = opened
 let difficulty = 'easy';
-let vaultCracked = false;
 let numOfKeys = 0; //# of keys to be solved for
 
 let centerX = 0;
@@ -37,9 +36,10 @@ let keyRangeTop = 0;
 let foundKey = false;
 let failAttempt = false;
 let keyRangeSet = false;
+let key = 0;
+let keysRemaining = 3;
+let ledOutput = 'off';
 
-let keysRemaining = 0;
-let ledOutput = 0;
 //0 default
 //1 = green light
 //2 = red light
@@ -71,8 +71,8 @@ function setup() {
     port.open(usedPorts[0], 2400);
   }
 
-  connectButton = createButton("Connect");
-  connectButton.mousePressed(Connect);
+  // connectButton = createButton("Connect");
+  // connectButton.mousePressed(Connect);
   
   centerX = width / 2;
   centerY = height / 2;
@@ -134,7 +134,7 @@ function draw() {
     textSize(25);
     text("Welcome to Safe Cracker!", width / 4, (height / 16));
     textSize(15);
-    text("You will have 30 Seconds to Crack the Safe!", 270, 300);
+    text("You will have 60 Seconds to Crack the Safe!", 270, 300);
     text("Press button to play!", 430, 750);
 
     text("Select Your Difficulty Level.", 390, 400);
@@ -142,7 +142,6 @@ function draw() {
 
     if (buttonVal == 1) {
         gameScreen = 'playing';
-        startSpawn = true;
 
     }
   }
@@ -168,10 +167,16 @@ function draw() {
 
     //game time counter
     text("Cops will Arrive in:" + ceil(timeLeft), 30 , 45);
+    text("Keys Remaining: " + keysRemaining, 30, 80);
+
     //text("Bugs Squashed: " + bugsSquished , width - 210 , 45); score
 
     vaultCreation();
     vaultLock();
+
+    text("Vault key: " + key, 200, 200);
+    text("LED Value: " + ledOutput, 200, 230);
+    
     //playing around with vault door
     //circle(width /2, height /2, 50);
 
@@ -183,30 +188,17 @@ function draw() {
       vaultState = 'locked';
       timeLeft = 0;
     }
+    else if (keysRemaining == 0)
+    {
+      gameScreen = 'victoryScreen';
+      vaultState = 'unlocked';
+      timeLeft = 0;
+    }
   }
   //replace with victory / failure screens
   //either make new function for each ^^ 
   //or make if statement for boolean value
   //will be effectively replaced
-  function endScreen() {
-    background(130,82,45);
-
-    //text("Good Job!", width / 3, (height / 16));
-    //text("Final Score: " , 100, 300);
-    text("Press " + restartKey + " to play again.", 300, 400);
-    if (key === restartKey) {
-      if (restartKey = 'r') // added to alternate restart key between r and space, resolves error where game skips straight to end scene
-      {
-        restartKey = ' ';
-      }
-      else
-      {
-        restartKey = 'r';
-      }
-        //reset/ restart gane
-        gameScreen = 'playing';
-    }
-  }
   //end Screen for when player loses the game (cops arrive)
   //Show cops ariving with flashing lights
   function failScreen() {
@@ -218,6 +210,19 @@ function draw() {
     //start / play failure music 
     //end music and restart game
     //show stats? / old keys
+
+    text("You Failed!", 200, 100);
+    vaultCreation();
+
+    text("Press button to play again.", 300, 400);
+    if (buttonVal == 1) { // find another way to restart game
+
+        //reset/ restart gane
+        gameScreen = 'playing';
+        timeLeft = 60;
+        keysRemaining = 3;
+    }
+
   }
 
   //end screen for when player wins the game
@@ -227,7 +232,16 @@ function draw() {
     //start / play victory song
     //display money earned
     //end music / reset game
+    vaultCreation();
+    text("Victory!", 200, 100);
 
+    text("Press button to play again.", 300, 400);
+    if (buttonVal == 1) { // find another way to restart game
+        //reset/ restart gane
+        gameScreen = 'playing';
+        timeLeft = 60;
+        keysRemaining = 3;
+    }
   }
 
   //vault handle spins along with knob
@@ -322,27 +336,31 @@ function draw() {
 
     console.log(knobVal);
 
+  if (buttonVal == 1)
+  {
     if (knobVal >= keyRangeBottom && knobVal <= keyRangeTop)
     {
       //set Green LED to go on
       //move to next key / confirmation click
       // set correct Key count, once reaches certain # you win
       foundKey = true;
-      ledOutput = 1; // set green light on
+      ledOutput = 'green'; // set green light on
       keysRemaining--;
       keyRangeSet = false;
+
     }
     else
     {
       failAttempt = true;
-      ledOutput = 2; // set red light on
+      ledOutput = 'red'; // set red light on
       // set red LED to go off
       //speed up time
-      //timeRemaining - 5;
+      //timeLeft--;
+       timeLeft - 15;
       //error buzzer sound
 
-
     }
+  }
 
     //once key vals are gotten, set range for acceptable guesses
 
@@ -354,18 +372,19 @@ function draw() {
   }
 // set random value for key for vault combination
   function setKey() {
-    return Math.floor(Math.random() * 1023)
+    return Math.floor(Math.random() * 360)
   }
 
   function setKeyRange() { // maybe remove
 
-    let key = setKey(); // get random key value
+    key = setKey(); // get random key value
 
-    keyRangeBottom = key - 10; // get top / bot vals
-    keyRangeTop = key + 10;
+    keyRangeBottom = key - 15; // get top / bot vals
+    keyRangeTop = key + 15;
     keyRangeSet = true;
 
-    console.log(key);
+    text("Vault key: " + key, 200, 200);
+    //console.log(key);
   }
 
   function Connect() {

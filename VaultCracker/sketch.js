@@ -26,9 +26,21 @@ let centerY = 0;
 
 //keys to get into safe
 let key1 = 0;
-// let key1 = Math.floor(Math.random() * 1023)
-// let key2 = Math.floor(Math.random() * 1023)
-// let key3 = Math.floor(Math.random() * 1023)
+let key2 = 0;
+let key3 = 0;
+
+let keyVal = 0;
+let keyRangeBottom = 0;
+let keyRangeTop = 0;
+
+//get option for red or green LED
+let foundKey = false;
+let failAttempt = false;
+
+let ledOutput = 0;
+//0 default
+//1 = green light
+//2 = red light
 
 
 function preload() {
@@ -99,14 +111,17 @@ function draw() {
 
   //console.log(knobVal, buttonVal);
 
-  console.log(mouseX - centerX, mouseY - centerY); // just for pixel measurein  delete
-
-
-
-//console.log(key2);
-
-//console.log(key3);
+  //console.log(mouseX - centerX, mouseY - centerY); // just for pixel measurein  delete
   
+  //analog output to arduino
+  if (port.opened()) //first check that port is open and do every third frame
+  {
+      
+    let message = ledOutput; //object array 
+    console.log(message);
+    port.write(message); //send message every 60 frames per second
+    //write out values^^ over serial port
+  }
 }
   //display Menu text
   //get input to start
@@ -120,6 +135,9 @@ function draw() {
     text("You will have 30 Seconds to Crack the Safe!", 270, 300);
     text("Press button to play!", 430, 750);
 
+    text("Select Your Difficulty Level.", 390, 400);
+
+
     if (buttonVal == 1) {
         gameScreen = 'playing';
         startSpawn = true;
@@ -128,29 +146,30 @@ function draw() {
   }
   function playing() {
 
-    if (difficulty == 'hard') 
-    {
-      //set game stats to specific things
-      timeLeft = 15;
-    }
-    else if (difficulty == 'medium')
-    {
-      //set med stats
-      timeLeft = 30;
+    // if (difficulty == 'hard') 
+    // {
+    //   //set game stats to specific things
+    //   timeLeft = 15;
+    // }
+    // else if (difficulty == 'medium')
+    // {
+    //   //set med stats
+    //   timeLeft = 30;
 
-    }
-    else if (difficulty == 'easy')
-    {
-      //set easy stats
-      timeLeft = 45;
+    // }
+    // else if (difficulty == 'easy')
+    // {
+    //   //set easy stats
+    //   timeLeft = 45;
 
-    }
+    // }
 
     //game time counter
     text("Cops will Arrive in:" + ceil(timeLeft), 30 , 45);
     //text("Bugs Squashed: " + bugsSquished , width - 210 , 45); score
 
     vaultCreation();
+    vaultLock();
     //playing around with vault door
     //circle(width /2, height /2, 50);
 
@@ -189,7 +208,9 @@ function draw() {
   //end Screen for when player loses the game (cops arrive)
   //Show cops ariving with flashing lights
   function failScreen() {
+    //fill("red");
     //rect(0, 0, 300, 600);
+    //fill("blue");
     //rect(300, 0, 300, 600);
 
     //start / play failure music 
@@ -230,7 +251,7 @@ function draw() {
     
     push() // x= 1200, y = 1000
     noStroke();
-    circle(0, 0, 195); //set x / y to 0, 0 (origin) to translate / spin from center
+    circle(0, 0, 180); //set x / y to 0, 0 (origin) to translate / spin from center
     //create knob / handles for opening vault
     beginShape();
       
@@ -259,17 +280,7 @@ function draw() {
       vertex(-80, -110); // return
       vertex(-20, -50);
     endShape(CLOSE);
-    //rect(0, 0, 40, 270);
-  rotate(135);
-    fill('red');
-    //rect(0, 0 , 40, 270);
 
-    //rect(0, 0, 35, 250);
-
-    //rect(0, 0, 35, 250);
-
-    //top right
-    //rect(690, 390, 35, 100);
     pop();
   pop();
   //rotate above ^^
@@ -290,36 +301,49 @@ function draw() {
   function vaultLock() {
 
     //set vaultState to locked by default (done)
-    
+    setKeyRange();
 
-    //set vault keys and times ( 0 - 1023)
-    if (difficulty == 'hard') 
-    {
-      //set game stats to specific things
-    }
-    else if (difficulty == 'medium')
-    {
 
-    }
-    else if (difficulty == 'easy')
-    {
+    // if (knobVal >= keyRangeBottom && knobVal <= keyRangeTop)
+    // {
+    //   //set Green LED to go on
+    //   //move to next key / confirmation click
+    //   // set correct Key count, once reaches certain # you win
+    //   foundKey = true;
+    //   ledOutput = 1; // set green light on
+    // }
+    // else
+    // {
+    //   failAttempt = true;
+    //   ledOutput = 2; // set red light on
+    //   // set red LED to go off
+    //   //speed up time
+    //   //error buzzer sound
 
-    }
+    // }
 
     //once key vals are gotten, set range for acceptable guesses
 
     //check if answer is in range(key +/ - keyRange)
-
-
-
 
     //when time runs out, if vault is locked, fail screen
 
     //if vault is done before then, vict screen
   }
 // set random value for key for vault combination
-  function setKeys() {
+  function setKey() {
     return Math.floor(Math.random() * 1023)
+  }
+
+  function setKeyRange() { // maybe remove
+
+    let key = setKey(); // get random key value
+
+    keyRangeBottom = key - 10; // get top / bot vals
+    keyRangeTop = key + 10;
+
+    //check for in range
+
   }
 
   function Connect() {

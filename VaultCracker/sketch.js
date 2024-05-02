@@ -113,14 +113,15 @@ function draw() {
 
   //console.log(knobVal, buttonVal);
 
-  //console.log(mouseX - centerX, mouseY - centerY); // just for pixel measurein  delete
+  console.log(mouseX, mouseY);
+  
   
   //analog output to arduino
   if (port.opened()) //first check that port is open and do every third frame
   {
       
     let message = ledOutput; //object array 
-    console.log(message);
+    //console.log(message); //message log return point
     port.write(message); //send message every 60 frames per second
     //write out values^^ over serial port
   }
@@ -137,12 +138,22 @@ function draw() {
     text("You will have 60 Seconds to Crack the Safe!", 270, 300);
     text("Press button to play!", 430, 750);
 
-    text("Select Your Difficulty Level.", 390, 400);
+    text("Select Your Difficulty Level.", 380, 400);
 
+    //create boxes for difficulties /buttons?
+    //easy selection
+
+    rect(450, 440, 250, 75);
+    text("Easy", 546, 485); // done
+    //medium / normal
+    rect(450, 535, 250, 75);
+    // text("", 0, 0);
+    //hard
+    rect(450, 630, 250, 75);
+    // text("", 0, 0);
 
     if (buttonVal == 1) {
         gameScreen = 'playing';
-
     }
   }
   function playing() {
@@ -253,11 +264,23 @@ function draw() {
     
     fill(183, 186, 181);
     square(centerX, centerY, 700);
-    fill(123, 125, 121)
+    fill(123, 125, 121) //outer border
     rect(600, 178, 700 , 55);
     rect(600, 822, 700, 55);
     rect(923, 500  , 55, 700 );
-    rect(277, 500, 55, 700);    
+    rect(277, 500, 55, 700);
+    noStroke();
+    circle(centerX, centerY, 450); // door perimeter
+    rect(385, 410, 50, 60); //top hinge
+    rect(385, 590, 50, 60); //bot hinge
+    fill(183, 186, 181);
+
+    circle(374, 394, 12); //top, top hinge screw
+    circle(374, 423, 12); //bot, top hinge screw
+
+    circle(374, 575, 12); //top, bot hinge screw
+    circle(374, 605, 12); // bot, bot hinge screw
+    
 
     //vault handles
     
@@ -270,15 +293,16 @@ function draw() {
     push();
       fill(64, 64, 64);
       circle(0, 0, 220);
+      
     pop();
 
-    // fill(64, 64, 64);
-    // circle(0, 0, 350);
+    fill(80, 80, 80);
+    circle(0, 0, 370);
 
     fill(123, 123, 123);
+    
     circle(0, 0, 180); //set x / y to 0, 0 (origin) to translate / spin from center
-
-
+    
     
     //create knob / handles for opening vault
     beginShape();
@@ -310,19 +334,6 @@ function draw() {
 
     pop();
   pop();
-  //rotate above ^^
-  //create circle
-
-
-      // textSize(25);
-    // text("Welcome to Safe Cracker!", width / 4, (height / 16));
-    // textSize(15);
-    // text("You will have 30 Seconds to Crack the Safe!", 270, 300);
-    // text("Press space to start the Timer.", 350, 400);
-
-  //create vault bars to spin
-
-  // create spinning animation
  }
   //where the vault unlocking will occur
   function vaultLock() {
@@ -334,7 +345,7 @@ function draw() {
       setKeyRange();
     }
 
-    console.log(knobVal);
+    //console.log(knobVal); //knob val return point
 
   if (buttonVal == 1)
   {
@@ -387,6 +398,19 @@ function draw() {
     //console.log(key);
   }
 
+  // function mouseClicked() {
+  
+  //   if (mouseX >= x && mouseX <= x + size && mouseY >= y && mouseY <= y + size)
+  //   {
+      
+  //     console.log("mouseClicked");
+  //   }
+  //   else{ // if click outside
+      
+  //   }
+  
+  // }
+
   function Connect() {
     //check if port is not open
     if (!port.opened()) // is port already opened or not?
@@ -400,5 +424,6 @@ function draw() {
   //when program starts, upon first button click will be asked to open serial port, select arduino Uno device from list and click connect
   
   }
+
  
 

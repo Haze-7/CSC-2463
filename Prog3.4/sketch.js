@@ -292,9 +292,7 @@ class Bug {
     //maybe play sound if bug is missed / not
   }
 
-  //Changes to be made:
-  //get input from joystick
-  //use input (switch) to start 
+
   function startMenu() {
     background(120,82,45);
     
@@ -311,10 +309,7 @@ class Bug {
 
     }
   }
-  //Changes to be made:
-  //output to LED
-  //input from Joystick(maybe not)
-  //May not need to make changes here
+
   function playing() {
     //game time counter
     
@@ -396,10 +391,7 @@ class Bug {
 
        //do border / bounds (make function?)
   }
-  //changes to be made
-  //change input to switch / joystick
-  //maybe change start / restart to click on button / specific area instead of straight click
-  //get outputs to led?
+
   function endScreen() {
     background(130,82,45);
 
@@ -421,27 +413,6 @@ class Bug {
     }
     //decide if else is necessary / needed
   }
-  //replace function w/ joystick presses
-  //may need to move into draw / can't be own function
-  // function buttonPressed() { // detect press on bug / stop dragging
-
-  //   bugs.forEach((bug) => {
-  //     if (!bug.isSquished && gameScreen === 'playing') // check if game is playing & the bug isn't already squished
-  //     {
-  //       if (bug.contains(mouseX, mouseY)) // if mouse is inside bug
-  //       {
-  //         bug.squish(); //squish it
-  //         bugsSquished++; // and to counter
-  //         speed += 0.2; // increase speed
-         
-
-  //         //play splat sound effect on squish/
-  //         sounds.player('squish').start();
-  //       }
-  //     }
-      
-  //   });
-  //}
   //Joystick
   function Connect() {
     //check if port is not open

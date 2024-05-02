@@ -221,7 +221,6 @@ class Bug {
     if (timeLeft <= 0)
     {
       playMusicSequence.stop(); // send play music sequence
-      //Tone.Transport.stop();
       sounds.player("outroMusic").start();
       gameScreen = 'endScreen';
       timeLeft = 0;

@@ -5,6 +5,7 @@ let gameFont;
 let spriteSheet;
 let gameScreen;
 let timeLeft = 60; // change to more reasonable time
+let realTime = 0;
 let gameOver = false;
 let gameEnd = false;
 let restartKey = 'r';
@@ -28,14 +29,12 @@ let key1 = 0;
 let key2 = 0;
 let key3 = 0;
 
+let keyRangeSet = false;
 let keyVal = 0;
 let keyRangeBottom = 0;
 let keyRangeTop = 0;
 
 //get option for red or green LED
-let foundKey = false;
-let failAttempt = false;
-let keyRangeSet = false;
 let vaultKey = 0;
 let keysRemaining = 3;
 let ledOutput = 0;
@@ -62,53 +61,119 @@ let diffHeight = 75;
 
 //sound  Setup
 
-let volumeLevel = -6; //change to make cop sound or vault sound
-let playbackRate = 1;
-let bgMusic;
-let playMusicSequence;
+//default sound values for each set of sounds
+let musicVolumeLevel = -5; //change to make cop sound or vault sound
+let soundVolumeLevel = -10;
+let vaultVolumeLevel = 10;
+
+
+
 //maybe remove filter
 let filter = new Tone.Filter(200, "lowpass"); // low pass for low notes / # is cut off frequency // trigger low pass in end screen to show that game is over
-let volume = new Tone.Volume(volumeLevel) // create / set volume effect
+let musicVolume = new Tone.Volume(musicVolumeLevel);// create / set volume effect
 
-//do sound pipeline
+let soundVolume = new Tone.Volume(soundVolumeLevel);
 
+let vaultVolume = new Tone.Volume(vaultVolumeLevel);
+
+//reverb effects
+let reverbLevel = 1.75;
+
+let soundReverb = new Tone.Reverb(reverbLevel); //create / set revert effect/ level
+
+
+//set volume / other dynamic perameters
+let sirenVolume = 5; // to dynamically be increased as game goes on / incremented
+
+//clicking params
+let clickingVolume = 0;
+let vaultPlaybackRate = 1;
+
+let music;
 let sounds;
+let vaultEffects;
 
-//add a sound for success or fail in guessing key
-sounds = new Tone.Players({
-  vaultClicking: "assets/vaultClicking.mp3",
-  quickSiren: "assets/quickSiren.mp3",
-  failureSiren: "assets/endSiren.mp3",
-  introMusic: "assets/introMusic.mp3", // created personally with the help of ableton playground
-  // victoryMusic: "" // reuse of intro, but with new effects
-  
+music = new Tone.Players({
+  introMusic: "assets/introMusic.mp3",
+  // victoryMusic: "", // reuse of intro, but with new effects
+  //failure Music (cop siren may replace)
 
 });
 
+//add a sound for success or fail in guessing key
+//add distortion / distance sound effect to slowly remove as cops get closer
+sounds = new Tone.Players({
+  vaultClicking: "assets/singleClick.mp3",
+  quickSiren: "assets/quickSiren.mp3",
+  policeSiren: "assets/gameSiren.mp3",
+  cruiserSiren: "assets/cruiserSiren.mp3",
+  failSiren: "assets/failSiren.mp3"// created personally with the help of ableton playground
+  // victoryMusic: "" // reuse of intro, but with new effects
+});
+
+//add a sound for success or fail in guessing key
+vaultEffects = new Tone.Players({
+  vaultClicking: "assets/singleClick.mp3",
+  //vault door opening on victory?
+});
+
+//add in playback rate for vault ^^ (TODO)
+
+
+
 //effects on sound samples
 //effects on introMusic
-sounds.player('introMusic').autostart = true; // starts music when app opened
-sounds.player('introMusic').loop; // loop intromusic once finished
-sounds.player("introMusic").Filter;
-//effects on squish sound
-sounds.player('vaultClicking').playbackRate = 1.4; // speed up sound to be more realistic for game
-sounds.player('vaultClicking').volume = -.5; // make quieter slightly
+music.player('introMusic').autostart = true; // starts music when app opened
+music.player('introMusic').loop = true; // loop intromusic once finished
+music.player("introMusic").Filter;
 
+//effects for vault clicking / lock
+vaultEffects.player('vaultClicking').loop = true;
+vaultEffects.player('vaultClicking').volume;
+vaultEffects.player('vaultClicking').playbackRate = vaultPlaybackRate;
+
+
+//playing background police sirens
+//temp
+sounds.player('quickSiren').volume; 
+sounds.player('quickSiren').loop = true;
+
+//in game background siren
+sounds.player('policeSiren').volume; 
+sounds.player('policeSiren').loop = true;
+//cruiser soiren
+sounds.player('cruiserSiren').volume; 
+sounds.player('cruiserSiren').loop = true;
 //effects on victoryMusic
-// sounds.player('outroMusic').loop; // loop intromusic once finished
+// sounds.player('outroMusic').loop; // loop outromusic once finished
 // sounds.player("outroMusic").Filter;
 // sounds.player("outroMusic").volume = -25;
 
 //do same for lose music (sirens);
 //set volume high compard to in game
 
-sounds.connect(volume);
-volume.toDestination();
+//connections for music
+music.connect(filter); // run through volume first
+filter.connect(musicVolume);
+musicVolume.toDestination(); // pipe through revereb effect
+
+//connections for sounds(sirens)
+
+sounds.connect(soundVolume);
+soundVolume.connect(soundReverb);
+soundReverb.toDestination(); // add other effects / filters
+
+vaultEffects.connect(vaultVolume);
+//vaultVolume.connect();
+vaultVolume.toDestination();
+
+//connections for vault sounds(vaultEffects)
+
 
 
 function preload() {
 
-  gameFont = loadFont("assets/PressStart2P-Regular.ttf"); // load in google font
+  gameFont = loadFont("assets/courbi.ttf"); // load in google font
 
   //row: index row (vert) column: index colmn (horiz) frames: no index to go through
   // animations = {
@@ -190,41 +255,51 @@ function draw() {
 
   function startMenu() {
     background(128,128,128);
+    textSize(65);
+    text("Welcome to Safe Cracker!", 115, 150);
     textSize(25);
-    text("Welcome to Safe Cracker!", 300, 100);
-    textSize(15);
-    text("You will have 60 Seconds to Crack the Safe!", 270, 300);
+    text("Break into the Safe before the police arrive!", 260, 270);
     text("Select Your Difficulty Level.", 380, 400);
 
     //end start music
 
     //difficulty seleciton menu
     difficultySelect();
-    sounds.player('introMusic').stop(); // end start music
-    //quickSiren.start(); // start gameplay police siren / loop sound
+
   
   }
   function playing() {
     //find a way to track time incrementing for uping volume over time
 
-    //decrement time
+    realTime += deltaTime / 1000; // keep track of current 
+    console.log(ceil(realTime));
+
+    soundVolumeLevel++;
+    reverbLevel--;
+
+
+    //decrement play time for counter
     timeLeft -= deltaTime / 1000; //track time (deltaTime) convert from milli -> seconds (/1000) // time
     //find way to speed up timeLeft/ remove time for each incorrect answer
     //console.log(timeLeft);
     if (timeLeft <= 0)
     {
-      quickSiren.stop(); // stop gameplay sirens
-      sounds.player("failureSiren").start(); // sound return
+      //policeSiren.stop(); // stop gameplay sirens
+      sounds.player("policeSiren").stop();  //stop game siren
+      //sounds.player("").stop();
 
+      //sounds.player("policeSiren").start(); // start failure song/ sound
       gameScreen = 'failScreen';
       vaultState = 'locked';
       timeLeft = 0;
     }
     else if (keysRemaining == 0)
     {
+
+
       gameScreen = 'victoryScreen';
       vaultState = 'unlocked';
-      timeLeft = 0;
+      //timeLeft = 0;
     }
 
     //game time counter
@@ -234,6 +309,7 @@ function draw() {
 
     vaultCreation();
     vaultLock();
+    //keyProximity();
 
     text("Vault key: " + vaultKey, 200, 200);
     text("LED Value: " + ledOutput, 200, 230);
@@ -257,12 +333,13 @@ function draw() {
     //show stats? / old keys
 
     text("You Failed!", 200, 100);
-    difficultySelect();
+    //difficultySelect();
     vaultCreation();
     text("Select a difficulty to play again!", 340, 750);
     rectMode(CORNER);
     difficultySelect();
 
+    
   }
 
   //end screen for when player wins the game
@@ -273,8 +350,9 @@ function draw() {
     //display money earned
     //end music / reset game
    // vaultCreation();
-
-    text("Victory!", 200, 100);
+    textSize(50);
+    text("Victory!", 480, 100);
+    textSize(25);
     text("Select a difficulty to play again!", 340, 750);
 
     //vaultOpen()
@@ -365,6 +443,7 @@ function draw() {
  {
   // open vault animation
   //to be shown when character wins
+  //recreate vaultCreation
  }
   //where the vault unlocking will occur
   function vaultLock() {
@@ -379,25 +458,27 @@ function draw() {
     //console.log(knobVal); //knob val return point
 
   if (buttonVal == 1)
-  {
+  { // return here
     if (knobVal >= keyRangeBottom && knobVal <= keyRangeTop)
     {
       //set Green LED to go on
       //move to next key / confirmation click
       // set correct Key count, once reaches certain # you win
-      foundKey = true;
       ledOutput = 2; // set green light on / green = 1, red = 2
-      keysRemaining--;
-      keyRangeSet = false;
+      keysRemaining--; 
+
+      //PROBLEM: button is pressing more than once, decrementing by way more than 1
+      //find way to only get 1 button value
+      //IDEA: only accept ONE (set boolean value to true) per time button is pressed inside range, must leave range to click next
 
     }
     else
     {
+  
       ledOutput = 1; // set red light on
       // set red LED to go off
       //speed up time
       //timeLeft--;
-       //timeLeft - 15;
     }
   }
   else{
@@ -425,6 +506,43 @@ function draw() {
     keyRangeTop = vaultKey + 15;
     keyRangeSet = true;    
   }
+  function keyProximity() {
+    //set 0 == key value or range bot / top
+
+    if (knobVal >= keyRangeBottom && knobVal <= keyRangeTop)//range 1 (over key) / in key (+ / - 15)
+    {
+      //hights sound volume level
+      vaultVolumeLevel = 5;
+
+      //set speed to fastest
+      vaultPlaybackRate = 2;
+    }
+    else if (knobVal >= keyRangeBottom - 25 && knobVal <= keyRangeTop + 25)//range 2 // close (within )
+    {
+      //medium sound volume level
+      vaultVolumeLevel = 1;
+
+      //set speed to medium
+      vaultPlaybackRate = 1.7;
+    }
+    else if (knobVal >= keyRangeBottom - 50 && knobVal <= keyRangeTop + 60)//range 3 (approaching (within ))
+    {
+      //lower sound volume leve
+      vaultVolumeLevel = -2;
+
+      //set speed to slower
+      vaultPlaybackRate = 1.3;
+    }
+    else//range 4 / far (default) (beyond )
+    {
+      //lowest sound volume leve
+      vaultVolumeLevel = -5;
+
+      //set speed to slowest
+      vaultPlaybackRate = 1;
+
+    }
+  }
 
   function difficultySelect() {
     
@@ -443,9 +561,12 @@ function draw() {
     fill('black');
     text("Hard", 546, 675);
   }
+  //maybe chedk if keyRangeSet before running in playing
+  //handles sound component of key
+
 
   function mouseClicked() {
-  
+    
     if (mouseX >= easyX && mouseX <= easyX + diffWidth && mouseY >= easyY && mouseY <= easyY + diffHeight)
     {
       //set easy mode
@@ -453,8 +574,14 @@ function draw() {
       difficulty = 'easy';
       timeLeft = 60;
       gameScreen = 'playing';
-      console.log("easy");
+      
+      
+      music.player('introMusic').stop(); // end start music
+      sounds.player('cruiserSiren').start(); // each gamemode has diff sirens
+      vaultEffects.player('vaultClicking').start();
 
+
+      console.log("easy");
     }
     else if (mouseX >= mediumX && mouseX <= mediumX + diffWidth && mouseY >= mediumY && mouseY <= mediumY + diffHeight)
     { 
@@ -463,6 +590,9 @@ function draw() {
       difficulty = 'medium';
       timeLeft = 45;
       gameScreen = 'playing';
+
+      music.player('introMusic').stop(); // end start music
+      sounds.player('policeSiren').start();
       
       console.log("medium");
     }
@@ -474,11 +604,13 @@ function draw() {
       timeLeft = 30;
       gameScreen = 'playing';
       console.log("hard");
-    }
-    else
-    {
 
+      music.player('introMusic').stop(); // end start music
+      //sounds.player('quickSiren').start();
+      sounds.player('cruiserSiren').start(); // added difficulty of this siren?
+      
     }
+
   }
 
 

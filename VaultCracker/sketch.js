@@ -40,14 +40,15 @@ let keyRangeBottom = 0;
 let keyRangeTop = 0;
 let keyDistance = 0;
 
-//get option for red or green LED
 let vaultKey = 0;
 let keysRemaining = 3;
-let ledOutput = 0;
 
-//0 default
-//1 = green light
-//2 = red light
+//output values to arduino for flashing police LED lights
+let ledOutput = 0; // set condition
+let sirenSpeed = 1000; //set interval speed to match game
+
+
+
 
 //setup values for difficulty selection
 //easy button
@@ -255,10 +256,8 @@ function draw() {
   if (port.opened()) //first  check that port is open and do every third frame
   {
     //replace with speed of flashing / brightness values
-    //let message = ledOutput; //object array 
     let message = `${ledOutput}\n`; 
     //console.log(message); //message log return point
-
     port.write(message); //send message every 60 frames per second
     //write out values^^ over serial port
   }
@@ -272,6 +271,7 @@ function draw() {
     text("Break into the Safe before the police arrive!", 260, 270);
     text("Select Your Difficulty Level.", 380, 400);
 
+    ledOutput = 2;
     //end start music
 
     //difficulty seleciton menu
@@ -289,7 +289,8 @@ function draw() {
 
     soundVolumeLevel++;
     reverbLevel--;
-
+    ledOutput = 1; // set value to send to arduino that game is playing (trigger siren)
+    //sirenSpeed = ((timeLeft + 200) * 10);
 
     //decrement play time for counter
     timeLeft -= deltaTime / 1000; //track time (deltaTime) convert from milli -> seconds (/1000) // time
@@ -341,6 +342,8 @@ function draw() {
   //Show cops ariving with flashing lights
   function failScreen() {
     
+    ledOutput = 1; // set sirens to keep going
+    //set second value to set sirenSpeed(max speed)
     //start fail effects
     sounds.player('failSiren').start();
   
@@ -355,7 +358,7 @@ function draw() {
     text("Select a difficulty to play again!", 340, 750);
     rectMode(CORNER);
     difficultySelect();
-
+    
 
     
   }
@@ -363,6 +366,8 @@ function draw() {
   //end screen for when player wins the game
   //have rain money and provide money earned and time remaining?
   function victoryScreen() {
+
+    ledOutput = 2;
 
     //start / play victory song
     //display money earned
@@ -475,7 +480,6 @@ function draw() {
       setKeyRange();
     }
 
-
   if (buttonVal == 1)
   { // return here
     if (knobVal >= keyRangeBottom && knobVal <= keyRangeTop)
@@ -483,23 +487,17 @@ function draw() {
       //set Green LED to go on
       //move to next key / confirmation click
       // set correct Key count, once reaches certain # you win
-
-      ledOutput = 2; // set green light on / green = 1, red = 2
       keysRemaining--; 
       keyRangeSet = false;
     }
     else
     {
-  
-      ledOutput = 1; // set red light on
       // set red LED to go off
       //speed up time
-      //timeLeft--;
+      timeLeft--; // return here to fix time drop when prss button
     }
   }
-  else{
-    ledOutput = 0;
-  }
+
 
   }
 // set random value for key for vault combination
@@ -515,7 +513,7 @@ function draw() {
     keyRangeTop = vaultKey + 15;
     keyRangeSet = true;    
   }
-  function keyProximity() {
+  function keyProximity() { // set vault clicking to work with key distance
     //set 0 == key value or range bot / top
 
     if (keyDistance <= 15)//range 1 (over key) / in key (+ / - 15)

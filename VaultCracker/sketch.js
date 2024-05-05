@@ -705,21 +705,24 @@ function draw() {
 
   function policeResponse() {
 
-    if (timeLeft >= 28) //in this format, logic is opposite (block / set sirens to mute UNTIL time passed, then play them)
+    if (timeLeft <= 28) //in this format, logic is opposite (block / set sirens to mute UNTIL time passed, then play them)
     {
       sounds.player('policeSiren').playbackRate = 0; // first siren starts at 28 seconds left
+      sounds.player('cruiserSiren').playbackRate = cruiserPlaybackRate;
+      
       ledOutput = 2; // leds start flashing
 
-    }
-    else if (timeLeft >= 20)
-    {
-      sounds.player('cruiserSiren').playbackRate = 0 //with 20 secs left, more intense siren plays
-      ledOutput = 1;
+      if (timeLeft <= 18)
+      {
+        sounds.player('policeSiren').playbackRate = policePlaybackRate; // 
+        ledOutput = 1;
+      }
+
     }
     else
     {
-      sounds.player('policeSiren').playbackRate = policePlaybackRate; // s
-      sounds.player('cruiserSiren').playbackRate = cruiserPlaybackRate;
+      sounds.player('policeSiren').playbackRate = 0; // s
+      sounds.player('cruiserSiren').playbackRate = 0
       ledOutput = 1
     }
   }

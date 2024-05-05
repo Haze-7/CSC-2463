@@ -20,7 +20,7 @@ bgMusic = new Tone.AMSynth({
     sustain: 0.8,
     release: 0.56
   }
-})
+});
 
 volumeLevel = 10;
 

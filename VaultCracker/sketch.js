@@ -1,46 +1,36 @@
-/*
-TODO:
-fix clicling speed / volume not being dynamically set
-change led output to flashing over time (realtime)
-see if i can get sirens to start based on conditions
-*/
+//Vault Cracker Game
+//Created by: Hayes Chiasson
 
+//working youtube Link: https://youtu.be/GOpyO-VV6l0
+//game setup
 let gameFont;
 let gameScreen;
-let timeLeft = 0; // change to more reasonable time
+let timeLeft = 0; 
 let realTime = 0;
-
+//webserial port
 let port;
-
-//new / vault code
+//input setup
 let buttonVal = 0;
 let knobVal = 0;
 let vaultState = 'locked'; // update like gameScreen closed = locked, cracked = opened
 let difficulty = 'easy';
 let numOfKeys = 0; //# of keys to be solved for
-
 let centerX = 0;
 let centerY = 0;
 
-
-//keys to get into safe
-let key1 = 0;
-let key2 = 0;
-let key3 = 0;
-
+//vault setup
 let keyRangeSet = false;
 let keyVal = 0;
 let keyRangeBottom = 0;
 let keyRangeTop = 0;
 let keyDistance = 0;
-
 let vaultKey = 0;
 let keysRemaining = 3;
 
 //output values to arduino for flashing police LED lights
 let ledOutput = 0; // set condition
 
-let img;
+let img; // for vault open image
 
 //setup values for difficulty selection
 //easy button
@@ -98,14 +88,10 @@ let sounds;
 let vaultEffects;
 
 music = new Tone.Players({
-  introMusic: "assets/introMusic.mp3",
-  // victoryMusic: "", // reuse of intro, but with new effects
-  //failure Music (cop siren may replace)
-
+  introMusic: "assets/introMusic.mp3"
 });
 
-//add a sound for success or fail in guessing key
-//add distortion / distance sound effect to slowly remove as cops get closer
+
 sounds = new Tone.Players({
   quickSiren: "assets/quickSiren.mp3",
   policeSiren: "assets/gameSiren.mp3",
@@ -141,7 +127,6 @@ vaultEffects.player('vaultClicking').playbackRate = vaultPlaybackRate;
 
 
 //playing background police sirens
-//temp
 sounds.player('quickSiren').volume; 
 sounds.player('quickSiren').loop = true;
 
@@ -158,8 +143,6 @@ sounds.player('cruiserSiren').playbackRate = cruiserPlaybackRate;
 jailEffects.player('jailDoor').volume; 
 jailEffects.player('jailDoor').playbackRate = 1;
 
-//do same for lose music (sirens);
-//set volume high compard to in game
 
 //connections for music
 music.connect(musicFilter); // run through volume first
@@ -173,10 +156,6 @@ soundVolume.connect(soundReverb);
 soundReverb.toDestination(); // add other effects / filters
 
 //connections for vault sounds(vaultEffects)
-
-// vaultEffects.connect(vaultVolume);
-// //vaultVolume.connect();
-// vaultVolume.toDestination();
 
 vaultEffects.connect(vaultFilter);
 vaultFilter.connect(vaultVolume);
@@ -198,9 +177,6 @@ victoryMusic = new Tone.AMSynth({
   }
 });
 
-// victoryMusic.connect(musicVolume);
-// musicVolume.connect(musicFilter);
-// musicFilter.toDestination();
 victoryMusic.toDestination();
 
 victoryMusicSequence = new Tone.Sequence(function (time, note){
@@ -224,20 +200,13 @@ function setup() {
   textFont(gameFont); 
   gameScreen = 'start'; // set default screen upon opening game
 
- 
-
-  
-  //start background start sound
-
+  //automatically connect to serial port
   port = createSerial(); // like sound, doesn't start on own/ require user to do something to get it to activate
   
   let usedPorts = usedSerialPorts();
   if (usedPorts.length > 0) {
     port.open(usedPorts[0], 2400);
   }
-
-  // connectButton = createButton("Connect");
-  // connectButton.mousePressed(Connect);
   
   centerX = width / 2;
   centerY = height / 2;
@@ -246,17 +215,14 @@ function setup() {
 function draw() {
   background(128,128,128);
 
-  //replace to accomidate new endscreens
+  //determine / change game state
   if (gameScreen === 'start')
   { 
     startMenu();
-    //maybe trigger song here
-
   }
   else if (gameScreen === 'fail')
   {
     failScreen();
-    //maybe trigger song here
   }
   else if (gameScreen === 'victory')
   {
@@ -265,7 +231,6 @@ function draw() {
   else if (gameScreen === 'playing')
   {
     playing();
-    //maybe trigger song here
   }
 
   let str = port.readUntil("\n"); // reads output until it sees () value
@@ -279,9 +244,7 @@ function draw() {
   //analog output to arduino
   if (port.opened()) //first  check that port is open and do every third frame
   {
-    //replace with speed of flashing / brightness values
     let message = `${ledOutput}\n`; 
-    //console.log(message); //message log return point
     port.write(message); //send message every 60 frames per second
     //write out values^^ over serial port
   }
@@ -296,21 +259,16 @@ function draw() {
     text("Use audio cues to guess the combination!", 280, 800);
     text("Select Your Difficulty Level.", 380, 400);
     ledOutput = 2;
-    //end start music
 
-    //difficulty seleciton menu
+    //difficulty selection menu
     difficultySelect();
-
-  
   }
   function playing() {
-    //find a way to track time incrementing for uping volume over time
-
+    //incrementing value for time elapsed
     realTime += deltaTime / 1000; // keep track of current 
 
-    soundVolumeLevel++;
-    reverbLevel--;
-    //ledOutput = 1; // set value to send to arduino that game is playing (trigger siren)
+    soundVolumeLevel++; // cop sirens grow louder over time
+    reverbLevel--; // cop siren reverb(distance simulation) weakens over time
 
     //decrement play time for counter
     timeLeft -= deltaTime / 1000; //track time (deltaTime) convert from milli -> seconds (/1000) // time
@@ -318,18 +276,19 @@ function draw() {
 
     if (timeLeft <= 0)
     {
-      //policeSiren.stop(); // stop gameplay sirens
+      //end game sounds
       sounds.player("policeSiren").stop();  //stop game siren
       sounds.player('cruiserSiren').stop();
       vaultEffects.player('vaultClicking').stop();
+      //set game screen and start sound
       gameScreen = 'fail';
       jailEffects.player('jailDoor').start();
-      //sounds.player('failSiren').start();
       vaultState = 'locked';
       timeLeft = 0;
     }
     else if (keysRemaining == 0)
     {
+      //set game screem amd start spimd
       gameScreen = 'victory';
       vaultState = 'unlocked';
       //stop gameplay sounds
@@ -345,19 +304,17 @@ function draw() {
     text("Cops will Arrive in:" + ceil(timeLeft), 30 , 45);
     text("Keys Remaining: " + keysRemaining, 30, 80);
 
-
     vaultCreation();
     vaultLock();
     distanceFromKey();
     keyProximity();
     policeResponse();
 
-    //developerMode()
+    //developerMode() // for testing values
     
   }
 
   function failScreen() {
-    
     ledOutput = 1; // set sirens to keep going
     jailBars();
     textSize(50);
@@ -366,21 +323,12 @@ function draw() {
     text("Select a difficulty to try again!", 340, 750);
     rectMode(CORNER);
     difficultySelect();
-  
   }
 
   //end screen for when player wins the game
-  //have rain money and provide money earned and time remaining?
   function victoryScreen() {
 
     ledOutput = 2;
-
-    //make value to track (time since win) to show animation, then show difficulty Select and other bs
-
-    //start / play victory song
-    //display money earned
-    //end music / reset game
-   // vaultCreation();
     textSize(50);
     text("Victory!", 480, 100);
     textSize(25);
@@ -389,11 +337,8 @@ function draw() {
     vaultOpen();
     rectMode(CORNER);
     difficultySelect();
-   
-
-    //start victory songs
-
   }
+
   //draws jailbars for fail screen
   function jailBars()
   {
@@ -412,13 +357,11 @@ function draw() {
       rect(920, 0, 50, height);
       rect(1020, 0, 50, height);
       rect(1120, 0, 50, height);
-
     pop();
   }
 
   //vault handle spins along with knob
  function vaultCreation (){
-  //create Square
   rectMode(CENTER);
   push();
     fill(183, 186, 181);
@@ -429,7 +372,6 @@ function draw() {
     rect(923, 500  , 55, 700 );
     rect(277, 500, 55, 700);
     noStroke();
-
     push() // x= 1200, y = 1000
     noStroke();
       push();
@@ -451,14 +393,12 @@ function draw() {
     translate(centerX, centerY); // set origin to middle
     rotate(knobVal);
     
-
     fill(80, 80, 80);
     circle(0, 0, 370);
 
     fill(123, 123, 123);
-    
     circle(0, 0, 180); //set x / y to 0, 0 (origin) to translate / spin from center
-    
+
     //door handles
     //create knob / handles for opening vault
     beginShape();
@@ -487,16 +427,12 @@ function draw() {
       vertex(-80, -110); // return
       vertex(-20, -50);
     endShape(CLOSE);
-
     pop();
   pop();
  }
-
+//creates open vault image for display at victory
  function vaultOpen()
  {
-  // open vault animation
-  //to be shown when character wins
-  //recreate vaultCreation
   rectMode(CENTER);
   push();
     fill(183, 186, 181);
@@ -514,13 +450,11 @@ function draw() {
       image(img, 380, 275, 450, 450);
       pop(); 
     fill(64, 64, 64);
-    //circle(centerX, centerY, 460); //outer door rim
     fill(183, 186, 181);
     circle(centerX - 430, centerY, 450); // door perimeter // outer door perim(light grey)
     rect(385, 410, 50, 60); //top hinge
     rect(385, 590, 50, 60); //bot hinge
     fill(183, 186, 181);
-
   pop();
 
   push() // x= 1200, y = 1000
@@ -528,21 +462,15 @@ function draw() {
     translate(centerX, centerY); 
     noStroke();
 
-
     fill(80, 80, 80);
     circle(-430, 0, 370); // outer ring
 
     fill(123, 123, 123);
     circle(-430, 0, 180) // center circle
-
   pop();
-  
  }
   //where the vault unlocking will occur
   function vaultLock() {
-
-    //set vaultState to locked by default (done)
-    //set keysRemaining to # u want, decrement each time successful
     if (keyRangeSet == false)
     {
       setKeyRange();
@@ -550,22 +478,16 @@ function draw() {
 
   if (buttonVal == 1)
   { // return here
-    if (knobVal >= keyRangeBottom && knobVal <= keyRangeTop)
+    if (knobVal >= keyRangeBottom && knobVal <= keyRangeTop) // if in range
     {
-      //set Green LED to go on
-      //move to next key / confirmation click
-      // set correct Key count, once reaches certain # you win
-      keysRemaining--; 
-      keyRangeSet = false;
+      keysRemaining--; //when key found, 1 less key remaining
+      keyRangeSet = false; 
     }
     else if (keyDistance >= 35)
     {
-    timeLeft--; // return here to fix time drop when prss button
+    timeLeft--; //penalize player (speed up time) for incorrect guesses
     }
-
   }
-
-
   }
 // set random value for key for vault combination
   function setKey() {
@@ -573,62 +495,42 @@ function draw() {
   }
 
   function setKeyRange() { // maybe remove
-
     vaultKey = setKey(); // get random key value
-
     keyRangeBottom = vaultKey - 15; // get top / bot vals
     keyRangeTop = vaultKey + 15;
     keyRangeSet = true;    
   }
-  function keyProximity() { // set vault clicking to work with key distance
-    //set 0 == key value or range bot / top
-
+  //determine distance from key and set sound effects accordingly
+  function keyProximity() { 
     if (keyDistance <= 15)//range 1 (over key) / in key (+ / - 15)
     {
-      //hights sound volume level
-
-      //set speed to fastest
-      vaultPlaybackRate = 3;
+      vaultPlaybackRate = 3; 
       vaultEffects.player('vaultClicking').playbackRate = 2;
     }
-    else if (keyDistance <= 50)//range 2 // close (within )
+    else if (keyDistance <= 50)//range 2 // close (within 50 )
     {
-      //close sound volume level
-
-      //set speed to medium
       vaultPlaybackRate = 5;
       vaultEffects.player('vaultClicking').playbackRate = 3.5;
 
     }
-    else if (keyDistance <= 75)//range 3 (approaching (within ))
+    else if (keyDistance <= 75)//range 3 (approaching (within 75))
     {
-      //medium sound volume leve
-
-      //set speed to slower
       vaultPlaybackRate = 7;
       vaultEffects.player('vaultClicking').playbackRate = 5;
 
     }
-    else//range 4 / far (default) (beyond )
+    else//range 4 / far (default) (beyond 75)
     {
-      //lowest sound volume leve
-
-      //set speed to slowest
       vaultPlaybackRate = 10;
       vaultEffects.player('vaultClicking').playbackRate = 6;
-
     }
   }
-
+//calculate your current distance from the key
   function distanceFromKey() {
-    // let keyLocation = vaultKey;
-    // let currentLocation = knobVal;
-
     keyDistance = Math.abs(knobVal - vaultKey);     
   }
-
+  //create boxes for difficulty selection
   function difficultySelect() {
-    
     fill(183, 186, 181); // change all to variable names
     rect(easyX, easyY, diffWidth, diffHeight);
     fill('black');
@@ -644,9 +546,8 @@ function draw() {
     fill('black');
     text("Hard", 546, 675);
   }
-
+//handle checking for mouse clicks inside certain perameters
   function mouseClicked() {
-    
     if (mouseX >= easyX && mouseX <= easyX + diffWidth && mouseY >= easyY && mouseY <= easyY + diffHeight)
     {
       //set easy mode
@@ -654,16 +555,10 @@ function draw() {
       difficulty = 'easy';
       timeLeft = 60;
       gameScreen = 'playing';
-      
-      
       music.player('introMusic').stop(); // end start music
-      //sounds.player('jailDoor').stop();
       victoryMusicSequence.stop(); // start music sequence
-
       sounds.player('cruiserSiren').start(); // each gamemode has diff sirens
       vaultEffects.player('vaultClicking').start();
-
-      console.log("easy");
     }
     else if (mouseX >= mediumX && mouseX <= mediumX + diffWidth && mouseY >= mediumY && mouseY <= mediumY + diffHeight)
     { 
@@ -672,14 +567,10 @@ function draw() {
       difficulty = 'medium';
       timeLeft = 45;
       gameScreen = 'playing';
-
       music.player('introMusic').stop(); // end start music
-      //sounds.player('jailDoor').stop();
       victoryMusicSequence.stop(); // start music sequence
       sounds.player('policeSiren').start();
       vaultEffects.player('vaultClicking').start();
-      
-      console.log("medium");
     }
     else if (mouseX >= hardX && mouseX <= hardX + diffWidth && mouseY >= hardY && mouseY <= hardY + diffHeight)
     {
@@ -689,35 +580,25 @@ function draw() {
       timeLeft = 30;
       gameScreen = 'playing';
       console.log("hard");
-
       music.player('introMusic').stop(); // end start music
-      //sounds.player('jailDoor').stop();
       victoryMusicSequence.stop(); // start music sequence
-
       sounds.player('policeSiren').start();
       sounds.player('cruiserSiren').start(); // added difficulty of this siren?
-
       vaultEffects.player('vaultClicking').start();
-      
     }
-
   }
-
+//calculate / start police response (lights and sirens) based on time remaining and player input
   function policeResponse() {
-
     if (timeLeft <= 28) //in this format, logic is opposite (block / set sirens to mute UNTIL time passed, then play them)
     {
       sounds.player('policeSiren').playbackRate = 0; // first siren starts at 28 seconds left
       sounds.player('cruiserSiren').playbackRate = cruiserPlaybackRate;
-      
       ledOutput = 2; // leds start flashing
-
       if (timeLeft <= 18)
       {
         sounds.player('policeSiren').playbackRate = policePlaybackRate; // 
         ledOutput = 1;
       }
-
     }
     else
     {
@@ -726,9 +607,8 @@ function draw() {
       ledOutput = 1
     }
   }
-
-  function developerMode() // function designed to quickly display all relevant data on screen for developement
-  {
+//function for displaying all relevant data on screen for developement
+  function developerMode() {
     text("Vault key: " + vaultKey, 200, 200);
     text("LED Value: " + ledOutput, 200, 230);
     text("Knob Value: " + knobVal, 200, 260);

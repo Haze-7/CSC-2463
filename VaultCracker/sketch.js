@@ -199,7 +199,6 @@ function setup() {
   createCanvas(1200, 1000);
   textFont(gameFont); 
   gameScreen = 'start'; // set default screen upon opening game
-
   //automatically connect to serial port
   port = createSerial(); // like sound, doesn't start on own/ require user to do something to get it to activate
   
